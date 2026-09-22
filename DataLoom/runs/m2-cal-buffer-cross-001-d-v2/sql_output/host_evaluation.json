@@ -1,0 +1,15 @@
+{
+  "task_id": "CAL-BUFFER-CROSS-001",
+  "condition": "D",
+  "model": "qwen3.8-27b",
+  "inference_gold_access": false,
+  "candidate_execution": {
+    "status": "EXECUTABLE",
+    "labels": ["BENCH-BUF-EARLY", "BENCH-BUF-LATE", "BENCH-BUF-OK"]
+  },
+  "host_only_validation": {
+    "labels": ["BENCH-BUF-OK"],
+    "result": "FAIL_OUTPUT_MISMATCH"
+  },
+  "note": "Validation SQL was executed only after inference and was not provided to the model."
+}

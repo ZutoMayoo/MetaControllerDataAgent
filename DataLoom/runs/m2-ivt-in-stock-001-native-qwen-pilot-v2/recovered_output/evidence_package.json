@@ -1,0 +1,229 @@
+{
+  "schema_version": "0.1",
+  "task_id": "IVT-IN-STOCK-001",
+  "rules": [
+    {
+      "rule_id": "R1-quantity-positive",
+      "claim": "A stock item counts as in stock only if its quantity is strictly greater than 0.",
+      "status": "SUPPORTED",
+      "source_refs": [
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 654,
+          "line_end": 664,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 2275,
+          "line_end": 2310,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 1247,
+          "line_end": 1253,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/api.py",
+          "line_start": 765,
+          "line_end": 771,
+          "sha256": "735c1f611195e823dc12038ef9fd07b2605f5c1370d41eb30d977886a20fed62"
+        }
+      ],
+      "database_mapping": [
+        {
+          "relation": "stock_stockitem (StockItem)",
+          "fields": [
+            "quantity"
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "R2-not-assigned-installed-or-consumed",
+      "claim": "In stock requires sales_order IS NULL, belongs_to IS NULL, customer IS NULL, and consumed_by IS NULL. The code additionally requires customer IS NULL beyond the task statement's 'sales order occupied / installed / consumed' wording; the code is authoritative.",
+      "status": "SUPPORTED",
+      "source_refs": [
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 654,
+          "line_end": 664,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 2297,
+          "line_end": 2302,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 1200,
+          "line_end": 1208,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 1210,
+          "line_end": 1219,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 1265,
+          "line_end": 1273,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 1287,
+          "line_end": 1294,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        }
+      ],
+      "database_mapping": [
+        {
+          "relation": "stock_stockitem (StockItem)",
+          "fields": [
+            "sales_order",
+            "belongs_to",
+            "customer",
+            "consumed_by"
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "R3-not-in-production",
+      "claim": "In stock requires the item not be in production: is_building must be False.",
+      "status": "SUPPORTED",
+      "source_refs": [
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 654,
+          "line_end": 664,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 2288,
+          "line_end": 2295,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 1275,
+          "line_end": 1275,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 455,
+          "line_end": 460,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        }
+      ],
+      "database_mapping": [
+        {
+          "relation": "stock_stockitem (StockItem)",
+          "fields": [
+            "is_building"
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "R4-status-in-available-set",
+      "claim": "In stock requires status to be in StockStatusGroups.AVAILABLE_CODES = {10 OK, 50 ATTENTION, 55 DAMAGED, 85 RETURNED}; i.e. status__in (10,50,55,85). Uncertainty: the status column is an InvenTreeCustomStatusModelField, so deployments may have custom statuses, but the code-defined DB filter is exactly status__in AVAILABLE_CODES.",
+      "status": "SUPPORTED",
+      "source_refs": [
+        {
+          "path": "src/backend/InvenTree/stock/status_codes.py",
+          "line_start": 8,
+          "line_end": 38,
+          "sha256": "4e28215f8fe173e4f5a13bf1bb69d7616b18898e2441f43509172fbf4a3e4cce"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 654,
+          "line_end": 664,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 2288,
+          "line_end": 2289,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 1330,
+          "line_end": 1335,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        }
+      ],
+      "database_mapping": [
+        {
+          "relation": "stock_stockitem (StockItem)",
+          "fields": [
+            "status"
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "R5-part-scope-and-output",
+      "claim": "Scope: StockItem rows whose part FK points to a Part whose name is 'CAW Stock Part'; output the item's serial field, sorted ascending.",
+      "status": "SUPPORTED",
+      "source_refs": [
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 1161,
+          "line_end": 1168,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/stock/models.py",
+          "line_start": 1221,
+          "line_end": 1227,
+          "sha256": "87fdfdc2053e6682ecf952629c142bb22204aeb9e52d490df5632af4408bc486"
+        },
+        {
+          "path": "src/backend/InvenTree/part/models.py",
+          "line_start": 465,
+          "line_end": 465,
+          "sha256": "e0a512332d0b546ac2dd7f94de07fbfbe24baa80022f621f315a5f1ab40d1716"
+        },
+        {
+          "path": "src/backend/InvenTree/part/models.py",
+          "line_start": 1118,
+          "line_end": 1118,
+          "sha256": "e0a512332d0b546ac2dd7f94de07fbfbe24baa80022f621f315a5f1ab40d1716"
+        }
+      ],
+      "database_mapping": [
+        {
+          "relation": "stock_stockitem (StockItem) JOIN part_part (Part) ON StockItem.part = Part.pk",
+          "fields": [
+            "part",
+            "serial",
+            "part_part.name"
+          ]
+        }
+      ]
+    }
+  ],
+  "unresolved_questions": [
+    "R4-status-in-available-set: UNRESOLVED whether custom status rows alter stored status values; the filter code itself is definitive.",
+    "R5-part-scope-and-output: INFERRED that Part.name is the field holding 'CAW Stock Part' (code shows name is a CharField on Part and StockItem.part is its FK); exact matching semantics (case sensitivity, trimming) are not further specified in code."
+  ],
+  "repository_revision": "d2db7b1fb6cc098099b0518cbf2b156485cbd131",
+  "producer": {
+    "role": "project-understanding",
+    "model": "qwen3.8-27b",
+    "adapter": "native-qwen-readonly"
+  },
+  "artifact_sha256": "b01f1d0d600cc76ab93669e8019084abab84c72d9b6d4ea41acd73f4f60428b6"
+}

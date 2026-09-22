@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.1",
+  "task_id": "CAL-BUFFER-CROSS-001",
+  "adapter": "code-aware",
+  "task_kind": "code_aware_sql",
+  "public_assets": [
+    "generated/sanitized_task_statement.md",
+    "source/cal-diy"
+  ],
+  "access_policy": {
+    "repository_read": true,
+    "database_read_only": true,
+    "gold_and_validation_visible_to_inference": false
+  },
+  "evaluator": {
+    "mode": "host_only",
+    "inference_feedback": false
+  },
+  "extensions": {
+    "project": "cal-diy",
+    "repository_root": "D:\\GraduationProject\\ProgressReport\\P9\\Code-awareBenchmark\\source\\cal-diy",
+    "repository_revision": "176037d0afbe572f870a3c702985e7cd83fe6c0c",
+    "task_markdown": "For event type `901002`, which of the three proposed windows on 2026-11-03 can Cal.diy offer while booking `BENCH-BUF-EXISTING` exists?"
+  }
+}

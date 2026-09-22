@@ -1,0 +1,124 @@
+[
+  {
+    "turn": 1,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-963cd55adf219634",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_schema='public' ORDER BY table_name, ordinal_position LIMIT 200;\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-a1769c84043447f1",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name;\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 2,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-aa6a86699b91f23a",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT t.table_name, c.column_name, c.data_type FROM information_schema.tables t JOIN information_schema.columns c ON c.table_schema=t.table_schema AND c.table_name=t.table_name WHERE t.table_schema='public' ORDER BY t.table_name, c.ordinal_position;\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 3,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-a9371c7b2b4db1f5",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 4,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-8392699e8f54ccf6",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT c.table_name, c.column_name, c.data_type FROM information_schema.columns c WHERE c.table_schema='public' AND c.table_name IN ('EventType','Booking','SelectedSlots','Schedule','Host') ORDER BY c.table_name, c.ordinal_position\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 5,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-82e0bd89f862b97a",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT e.id, e.title, e.slug, e.length, e.beforeEventBuffer, e.afterEventBuffer, e.timeZone, e.userId, e.scheduleId FROM EventType e WHERE e.id=901002 OR e.slug ILIKE '%bench%' OR e.title ILIKE '%bench%'\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-b63c262ee0b0e926",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT id, uid, eventTypeId, title, startTime, endTime, status FROM Booking WHERE uid ILIKE '%BENCH%' OR title ILIKE '%BENCH%'\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-831a9811c29e8fc7",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT id, eventTypeId, userId, slotUtcStartDate, slotUtcEndDate, uid, releaseAt, isSeat FROM SelectedSlots WHERE eventTypeId=901002 OR uid ILIKE '%BENCH%' ORDER BY slotUtcStartDate\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 6,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-ac4515295468edda",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT id, title, slug, length, beforeEventBuffer, afterEventBuffer, timeZone, userId, scheduleId FROM \\\"EventType\\\" WHERE id=901002 OR slug ILIKE '%bench%' OR title ILIKE '%bench%'\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-9b73dc3056145805",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT id, uid, eventTypeId, title, startTime, endTime, status FROM \\\"Booking\\\" WHERE uid ILIKE '%BENCH%' OR title ILIKE '%BENCH%'\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-b58553b3b4da43ef",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT id, eventTypeId, userId, slotUtcStartDate, slotUtcEndDate, uid, releaseAt, isSeat FROM \\\"SelectedSlots\\\" WHERE eventTypeId=901002 OR uid ILIKE '%BENCH%' ORDER BY slotUtcStartDate\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": "finalizer",
+    "calls": []
+  }
+]

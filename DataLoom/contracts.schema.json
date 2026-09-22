@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dataloom.local/contracts/v0.1",
+  "title": "DataLoom common experiment contracts",
+  "type": "object",
+  "definitions": {
+    "SourceRef": {
+      "type": "object",
+      "required": ["path", "sha256", "line_start", "line_end"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "line_start": {"type": "integer", "minimum": 1},
+        "line_end": {"type": "integer", "minimum": 1},
+        "symbol": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "BusinessRule": {
+      "type": "object",
+      "required": ["rule_id", "claim", "status", "source_refs", "database_mapping"],
+      "properties": {
+        "rule_id": {"type": "string", "minLength": 1},
+        "claim": {"type": "string", "minLength": 1},
+        "status": {"enum": ["SUPPORTED", "INFERRED", "UNRESOLVED", "CONFLICTING"]},
+        "source_refs": {"type": "array", "items": {"$ref": "#/definitions/SourceRef"}},
+        "conditions": {"type": "array", "items": {"type": "string"}},
+        "exceptions": {"type": "array", "items": {"type": "string"}},
+        "database_mapping": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["relation", "fields"],
+            "properties": {
+              "relation": {"type": "string"},
+              "fields": {"type": "array", "items": {"type": "string"}}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "SUPPORTED"}}},
+          "then": {"properties": {"source_refs": {"minItems": 1}}}
+        }
+      ],
+      "additionalProperties": false
+    },
+    "TaskSpec": {
+      "type": "object",
+      "required": ["schema_version", "task_id", "adapter", "task_kind", "public_assets", "access_policy", "evaluator"],
+      "properties": {
+        "schema_version": {"const": "0.1"},
+        "task_id": {"type": "string", "minLength": 1},
+        "adapter": {"enum": ["code-aware", "spider2-dbt", "bird"]},
+        "task_kind": {"enum": ["text_to_sql", "project_transformation", "code_aware_sql"]},
+        "public_assets": {"type": "array", "items": {"type": "string"}},
+        "access_policy": {"type": "object"},
+        "evaluator": {"type": "object"},
+        "extensions": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "EvidencePackage": {
+      "type": "object",
+      "required": ["schema_version", "task_id", "repository_revision", "rules", "unresolved_questions", "producer"],
+      "properties": {
+        "schema_version": {"const": "0.1"},
+        "task_id": {"type": "string"},
+        "repository_revision": {"type": "string"},
+        "rules": {"type": "array", "items": {"$ref": "#/definitions/BusinessRule"}},
+        "unresolved_questions": {"type": "array", "items": {"type": "string"}},
+        "producer": {"type": "object"},
+        "artifact_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "SkillManifest": {
+      "type": "object",
+      "required": ["id", "version", "roles", "description", "allowed_tools", "input_contracts", "output_contracts"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "version": {"type": "string"},
+        "roles": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "description": {"type": "string"},
+        "allowed_tools": {"type": "array", "items": {"type": "string"}},
+        "input_contracts": {"type": "array", "items": {"type": "string"}},
+        "output_contracts": {"type": "array", "items": {"type": "string"}},
+        "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "CandidateArtifact": {
+      "type": "object",
+      "required": ["task_id", "kind", "path", "sha256", "execution_status"],
+      "properties": {
+        "task_id": {"type": "string"},
+        "kind": {"enum": ["sql", "dbt_patch", "report"]},
+        "path": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "execution_status": {"enum": ["NOT_RUN", "EXECUTABLE", "EXECUTION_ERROR"]},
+        "execution_evidence": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "RunManifest": {
+      "type": "object",
+      "required": ["run_id", "task_id", "condition", "model", "budget", "source_hashes", "artifacts", "evaluation_feedback_available_during_inference"],
+      "properties": {
+        "run_id": {"type": "string"},
+        "task_id": {"type": "string"},
+        "condition": {"type": "string"},
+        "model": {"type": "object"},
+        "budget": {"type": "object"},
+        "source_hashes": {"type": "object"},
+        "artifacts": {"type": "array", "items": {"type": "string"}},
+        "evaluation_feedback_available_during_inference": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,412 @@
+{
+  "role": "project-understanding",
+  "adapter": "native-qwen-readonly",
+  "model": "qwen3.8-27b",
+  "status": "FAILED",
+  "allowed_tools": [
+    "read_file",
+    "glob",
+    "grep"
+  ],
+  "audit": [
+    {
+      "turn": 1,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-b87b56620495f342",
+          "type": "function",
+          "function": {
+            "name": "glob",
+            "arguments": "{\"pattern\": \"*\", \"limit\": 100}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-9aa6210b97f1be44",
+          "type": "function",
+          "function": {
+            "name": "glob",
+            "arguments": "{\"pattern\": \"**/*.py\", \"limit\": 200}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-a6085dbd3017e2d8",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"def in_stock\", \"path_glob\": \"src/backend/InvenTree/**/*.py\"}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-b2ce7a347946d924",
+          "type": "function",
+          "function": {
+            "name": "glob",
+            "arguments": "{\"pattern\": \"src/backend/InvenTree/stock/*.py\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-94d87e0ebb59e67a",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"def (in_stock|allocated|consumed|assigned|installed|under_construction|is_stocked|is_active|available)\", \"path_glob\": \"src/backend/InvenTree/stock/models.py\"}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-95046a56bfdb581e",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"StockStatus|status_codes\", \"path_glob\": \"src/backend/InvenTree/stock/status_codes.py\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-8ab0affde24d8f59",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/models.py\", \"line_start\": 2240, \"line_end\": 2420}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-8832692c3bfd9ed8",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/status_codes.py\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-a0dfd5575f6f3b1c",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"is_building|build_line|consumed_by|belongs_to|sales_order|customer\", \"path_glob\": \"src/backend/InvenTree/stock/models.py\"}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-9023a1cd6bd8a4e6",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"serial = |quantity = |status = |part = |class StockItem\\\\(\", \"path_glob\": \"src/backend/InvenTree/stock/models.py\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-930642e958ad9f48",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/models.py\", \"line_start\": 426, \"line_end\": 500}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-968b60cf9f0c676a",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/models.py\", \"line_start\": 1155, \"line_end\": 1300}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-8cf3193d9d56424c",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"IN_STOCK_FILTER\", \"path_glob\": \"src/backend/InvenTree/**/*.py\"}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-8991cb34203351b3",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"in_stock\", \"path_glob\": \"src/backend/InvenTree/stock/filters.py\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-bc32b6d6cb9807f9",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/models.py\", \"line_start\": 640, \"line_end\": 700}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-856be9acf3f0bcc1",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/api.py\", \"line_start\": 755, \"line_end\": 795}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-950e2de2c8b65788",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/part/models.py\", \"line_start\": 1820, \"line_end\": 1900}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-b42a18bf93a458fc",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/models.py\", \"line_start\": 980, \"line_end\": 1150}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 10,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-97f521c0aad357e3",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/models.py\", \"line_start\": 1300, \"line_end\": 1360}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-a8b57d02f75524d3",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"name = models.CharField|class Part\\\\(\", \"path_glob\": \"src/backend/InvenTree/part/models.py\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 11,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-85c91c0b2a3d21b3",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"db_table\", \"path_glob\": \"src/backend/InvenTree/stock/models.py\"}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-a146dfc9759492de",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"db_table\", \"path_glob\": \"src/backend/InvenTree/part/models.py\"}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-beaebe641331cabf",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/part/models.py\", \"line_start\": 1110, \"line_end\": 1135}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 12,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-8d1b95cbe555c6c0",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/serializers.py\", \"line_start\": 540, \"line_end\": 565}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-869dc2e58cf0f334",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/api.py\", \"line_start\": 1010, \"line_end\": 1030}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 13,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-93ba7123ac7a04ff",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"class InvenTreeModel|db_table|abstract\", \"path_glob\": \"src/backend/InvenTree/InvenTree/models.py\"}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-8174fd22e78bacf4",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/models.py\", \"line_start\": 875, \"line_end\": 960}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 14,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-be16a627d349f8f8",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/models.py\", \"line_start\": 960, \"line_end\": 1000}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 15,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-808b29c3d1a67a76",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/api.py\", \"line_start\": 700, \"line_end\": 755}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-af24de1549edb52b",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"order_by|ordering\", \"path_glob\": \"src/backend/InvenTree/stock/api.py\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 16,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-b5f24e2cc480d0c9",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/part/models.py\", \"line_start\": 465, \"line_end\": 475}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-9273cdf1f0b2174e",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/stock/models.py\", \"line_start\": 500, \"line_end\": 540}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 17,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-852a9656239d277b",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"class InvenTreeCustomStatusModelField|class StatusCodeModelField|status_custom_key|class StatusCodeMixin\", \"path_glob\": \"src/backend/InvenTree/InvenTree/fields.py\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 18,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-8c4819c2f4351be0",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"class InvenTreeCustomStatusModelField|class StatusCodeModelField|status_custom_key = |class StatusCodeMixin\", \"path_glob\": \"src/backend/InvenTree/**/*.py\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 19,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-a06a236f80693f8e",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/backend/InvenTree/generic/states/fields.py\", \"line_start\": 80, \"line_end\": 220}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 20,
+      "finish_reason": "length",
+      "tool_calls": []
+    }
+  ]
+}

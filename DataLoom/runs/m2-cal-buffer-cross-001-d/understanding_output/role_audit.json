@@ -1,0 +1,194 @@
+{
+  "role": "project-understanding",
+  "adapter": "native-qwen-readonly",
+  "model": "qwen3.8-27b",
+  "status": "FAILED",
+  "allowed_tools": [
+    "read_file",
+    "glob",
+    "grep"
+  ],
+  "audit": [
+    {
+      "turn": 1,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-a85c8cb5982c50c6",
+          "type": "function",
+          "function": {
+            "name": "glob",
+            "arguments": "{\"pattern\": \"**/*\", \"limit\": 100}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-a987642575d48588",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"901002\", \"limit\": 50}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-82328e5b67c390a3",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"BENCH-BUF\", \"limit\": 30}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-9cb0a8f21feac8e4",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"901002\", \"limit\": 30, \"path_glob\": \"packages/**\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-a9222c1fad845e1a",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"Cal\\\\.diy|cal\\\\.diy\", \"limit\": 30}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-8aac8478bc782dad",
+          "type": "function",
+          "function": {
+            "name": "glob",
+            "arguments": "{\"pattern\": \"packages/api-v2/src/modules/**/eventTypes/**\", \"limit\": 100}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-94327f06b6a7fdb3",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"eventType\", \"limit\": 60, \"path_glob\": \"packages/api-v2/src/modules/availability/**\"}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-80009622e20c8d74",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"query\": \"BENCH\", \"limit\": 30}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-9c480ef5edf0bed1",
+          "type": "function",
+          "function": {
+            "name": "glob",
+            "arguments": "{\"pattern\": \"packages/core/**/*availab*\", \"limit\": 50}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-bc3d7926866fa5a3",
+          "type": "function",
+          "function": {
+            "name": "glob",
+            "arguments": "{\"pattern\": \"packages/core/**/*\", \"limit\": 100}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-ac3817f819c660ff",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"limit\": 30, \"query\": \"eventType\", \"path_glob\": \"packages/trpc/**\"}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-87e6cd529ef930bf",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"limit\": 30, \"query\": \"901002|event_type|eventType.*number\", \"path_glob\": \"packages/prisma/**\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-aabd29713499777f",
+          "type": "function",
+          "function": {
+            "name": "glob",
+            "arguments": "{\"limit\": 100, \"pattern\": \"packages/trpc/server/routers/**/availab*/**\"}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-b6e4068adc701432",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"limit\": 50, \"query\": \"eventType\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "finish_reason": "tool_calls",
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-86dc2c8d3691e8a8",
+          "type": "function",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"limit\": 60, \"query\": \"beforeBuffer|afterBuffer\"}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-a79918771aca0860",
+          "type": "function",
+          "function": {
+            "name": "glob",
+            "arguments": "{\"limit\": 100, \"pattern\": \"packages/trpc/server/routers/viewer/availability/*.ts\"}"
+          }
+        }
+      ]
+    },
+    {
+      "turn": "finalizer",
+      "finish_reason": "stop",
+      "tool_calls": []
+    }
+  ]
+}

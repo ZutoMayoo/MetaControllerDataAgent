@@ -1,0 +1,141 @@
+{
+  "schema_version": "0.1",
+  "project": "DataLoom",
+  "status": "M0_COMPLETE",
+  "standard_inference_policy": {
+    "gold_access": "forbidden",
+    "official_evaluation_feedback_during_inference": false,
+    "maximum_evidence_backed_repairs": 1,
+    "verifier_is_official_judge": false
+  },
+  "milestones": [
+    {
+      "id": "M0",
+      "name": "实验规格与公共合同",
+      "status": "COMPLETE",
+      "deliverables": [
+        "M0_实验规格与边界.md",
+        "contracts.schema.json",
+        "实验注册表.json"
+      ]
+    },
+    {
+      "id": "M1",
+      "name": "Code-aware 项目理解证据产物",
+      "status": "COMPLETE_OFFLINE",
+      "deliverables": [
+        "runtime/contracts.py",
+        "runtime/codeaware_adapter.py",
+        "runtime/validate_evidence.py",
+        "skills/business-rule-tracing/SKILL.md",
+        "skills/schema-code-mapping/SKILL.md",
+        "skills/boundary-and-exception-analysis/SKILL.md",
+        "M1_项目理解离线验收记录.md"
+      ],
+      "validation": {
+        "gold_isolation_regressions": "5/5 PASS",
+        "provenance_fixture": "PASS",
+        "python_compile": "PASS",
+        "model_inference": "NOT_RUN"
+      }
+    },
+    {
+      "id": "M2",
+      "name": "Code-aware A/B/C/D/E/F 对照",
+      "status": "PILOT_COMPLETE_NOT_BENCHMARKED",
+      "pilot": {
+        "task": "inventree/IVT-IN-STOCK-001",
+        "condition": "D project_understanding_evidence_package",
+        "model": "qwen3.8-27b",
+        "evidence_validation": "PASS",
+        "note": "This validates the gold-free project-understanding and provenance path only; no SQL candidate or official task score was produced."
+      },
+      "depends_on": ["M1"]
+    },
+    {
+      "id": "M3",
+      "name": "Spider 2.0-DBT 迁移",
+      "status": "NOT_STARTED",
+      "depends_on": ["M2"]
+    },
+    {
+      "id": "M4",
+      "name": "BIRD 精简 SQL 路径",
+      "status": "NOT_STARTED",
+      "depends_on": ["M2"]
+    },
+    {
+      "id": "M5",
+      "name": "动态调度对照",
+      "status": "DEFERRED",
+      "depends_on": ["M2", "M3", "M4"]
+    }
+  ],
+  "conditions": {
+    "code_aware": {
+      "A": "schema_only",
+      "B": "human_oracle_evidence",
+      "C": "full_repository_direct",
+      "D": "project_understanding_evidence_package",
+      "E": "D_plus_project_understanding_skills",
+      "F": "B_as_evidence_package"
+    },
+    "spider2_dbt": {
+      "S0": "current_new_signalpilot",
+      "S1": "project_understanding_evidence_package",
+      "S2": "S1_plus_dbt_skills",
+      "S3": "dbt_skills_without_project_understanding"
+    },
+    "bird": {
+      "B0": "current_deterministic_schema_context",
+      "B1": "dataloom_runtime_without_project_understanding",
+      "B2": "B1_plus_sql_skills",
+      "B3": "B2_plus_evidence_verifier_and_one_repair"
+    }
+  },
+  "dataset_split": {
+    "strategy": "project_level_holdout",
+    "development_projects": [
+      {
+        "project": "apache-fineract",
+        "tasks": ["FNR-LAST-PAYMENT-002", "FNR-PAYMENT-CLASS-003", "FNR-USER-INITIATED-VALUE-004"]
+      },
+      {
+        "project": "cal-diy",
+        "tasks": ["CAL-BUFFER-CROSS-001", "CAL-ACTIVE-OFFER-006", "CAL-SEAT-VISIBILITY-008"]
+      }
+    ],
+    "validation_projects": [
+      {
+        "project": "snipe-it",
+        "tasks": ["SNP-AVAILABLE-CHECKOUT-001", "SNP-CHECKIN-DELETED-002", "SNP-OVERDUE-CHECKIN-004", "SNP-REASSIGNABLE-SEAT-003"]
+      }
+    ],
+    "heldout_projects": [
+      {
+        "project": "saleor",
+        "tasks": ["SLR-CHANNEL-PURCHASE-009", "SLR-ORDER-CANCEL-003", "SLR-STOCK-EFFECTIVE-008", "SLR-STOCK-RESERVATION-007"]
+      }
+    ],
+    "status": "FROZEN_V2_CALDIY_SUBSTITUTION",
+    "supersedes": "FROZEN_V1",
+    "rationale": "Project-level split prevents repository and business-rule leakage. Cal.diy replaces Inventree in the development split because its fixed source, isolated PostgreSQL environment, and three tasks with prior admission evidence are currently runnable; the historical Inventree pilot remains architecture evidence only and is excluded from V2 benchmark scoring. Snipe-IT supplies four independently prepared validation tasks; Saleor remains held out as a separate Django/GraphQL commerce codebase."
+  },
+  "reuse_inventory": [
+    {
+      "component": "Code-aware task packages and task scoring assets",
+      "path": "P9/Code-awareBenchmark/*/tasks",
+      "milestones": ["M1", "M2"]
+    },
+    {
+      "component": "Spider Preparation, controller and full-experiment runner",
+      "path": "P9/optimizedAgent/clean_replay",
+      "milestones": ["M3"]
+    },
+    {
+      "component": "BIRD deterministic context, isolated runner and host evaluator",
+      "path": "P10/BIRD-MetaController",
+      "milestones": ["M4"]
+    }
+  ]
+}

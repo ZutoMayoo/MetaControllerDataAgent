@@ -1,0 +1,124 @@
+[
+  {
+    "turn": 1,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-9c39262df99b42bc",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT table_schema, table_name, column_name, data_type\\nFROM information_schema.columns\\nWHERE table_name ILIKE '%event%' OR table_name ILIKE '%booking%'\\nORDER BY table_name, ordinal_position\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-9fde1362dc88b050",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema') ORDER BY 1,2\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 2,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-a7ce47fcf04508de",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT column_name, data_type FROM information_schema.columns WHERE table_schema='public' AND table_name IN ('EventType','Booking') ORDER BY table_name, ordinal_position\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 3,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-b43f422987866d79",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT id, slug, length, beforeEventBuffer, afterEventBuffer, hidden, schedulingType FROM \\\"EventType\\\" WHERE id = 901002\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-ae12a8e119fa5689",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT id, title, eventTypeId, \\\"startTime\\\", \\\"endTime\\\", status FROM \\\"Booking\\\" WHERE title ILIKE '%BENCH-BUF%'\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 4,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-9fcacb057d0556f1",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT \\\"id\\\", \\\"slug\\\", \\\"length\\\", \\\"beforeEventBuffer\\\", \\\"afterEventBuffer\\\", \\\"hidden\\\", \\\"schedulingType\\\" FROM \\\"EventType\\\" WHERE \\\"id\\\" = 901002\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-92a2c04acd43a1cf",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT \\\"id\\\", \\\"title\\\", \\\"eventTypeId\\\", \\\"startTime\\\", \\\"endTime\\\", \\\"status\\\" FROM \\\"Booking\\\" WHERE \\\"title\\\" ILIKE '%BENCH-BUF%' OR \\\"metadata\\\"::text ILIKE '%BENCH-BUF%'\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 5,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-9c2b8274e71b28d7",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT \\\"id\\\", \\\"title\\\", \\\"eventTypeId\\\", \\\"startTime\\\", \\\"endTime\\\", \\\"status\\\", \\\"dynamicEventSlugRef\\\", \\\"iCalUID\\\" FROM \\\"Booking\\\" WHERE \\\"startTime\\\"::date = '2026-11-03'\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-aae6a4e6957b11c4",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT \\\"id\\\", \\\"uid\\\", \\\"title\\\", \\\"eventTypeId\\\", \\\"startTime\\\", \\\"endTime\\\", \\\"status\\\" FROM \\\"Booking\\\" WHERE \\\"title\\\" LIKE '%BUF%' OR \\\"dynamicEventSlugRef\\\" ILIKE '%bench%' OR \\\"iCalUID\\\" ILIKE '%bench%' LIMIT 20\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 6,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-962957b5e0f97cb1",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT \\\"id\\\", \\\"title\\\", \\\"eventTypeId\\\", \\\"userId\\\", \\\"startTime\\\", \\\"endTime\\\", \\\"status\\\" FROM \\\"Booking\\\" ORDER BY \\\"id\\\"\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-9c15c074d576f48d",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT \\\"id\\\", \\\"slug\\\", \\\"userId\\\", \\\"teamId\\\", \\\"length\\\", \\\"beforeEventBuffer\\\", \\\"afterEventBuffer\\\", \\\"scheduleId\\\", \\\"timeZone\\\" FROM \\\"EventType\\\" WHERE \\\"id\\\" IN (901001, 901002)\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": "finalizer",
+    "calls": []
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "schema_version": "0.1",
+  "task_id": "SNP-AVAILABLE-CHECKOUT-001",
+  "repository_revision": "f3f1dd722b167587c7819f3c518cc5b14475f89f",
+  "rules": [
+    {
+      "rule_id": "available-for-checkout-status-policy",
+      "claim": "An asset is available for checkout only when it is unassigned, not soft-deleted, has a status relation, and that status is neither archived nor non-deployable.",
+      "status": "SUPPORTED",
+      "source_refs": [
+        {
+          "path": "app/Models/Asset.php",
+          "sha256": "0bf1304386ff6fda9f4d78464b0e46b20fd74f45f96e87699a5365f84acf15ef",
+          "line_start": 550,
+          "line_end": 567,
+          "symbol": "Asset::availableForCheckout"
+        }
+      ],
+      "conditions": ["assigned_to is empty", "deleted_at is empty"],
+      "exceptions": ["missing status relation returns false", "archived status returns false", "non-deployable status returns false"],
+      "database_mapping": [
+        {
+          "relation": "assets",
+          "fields": ["assigned_to", "deleted_at", "status_id"]
+        },
+        {
+          "relation": "status_labels",
+          "fields": ["archived", "deployable"]
+        }
+      ]
+    }
+  ],
+  "unresolved_questions": ["The exact physical table naming must be confirmed from the task database schema before SQL generation."],
+  "producer": {
+    "kind": "contract_fixture",
+    "purpose": "M1 provenance-validator regression only; not an agent-produced experiment artifact"
+  }
+}

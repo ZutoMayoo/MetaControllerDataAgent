@@ -1,0 +1,4 @@
+{
+  "error_type": "ValueError",
+  "error": "rules must be a list"
+}

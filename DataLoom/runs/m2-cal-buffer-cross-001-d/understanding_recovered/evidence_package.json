@@ -1,0 +1,193 @@
+{
+  "schema_version": "0.1",
+  "task_id": "CAL-BUFFER-CROSS-001",
+  "rules": [
+    {
+      "rule_id": "R1",
+      "claim": "Event types expose configurable beforeBuffer and afterBuffer settings (select options built in the Event Limits UI), i.e. buffer minutes are per-event-type configuration that gates which windows are offerable.",
+      "status": "SUPPORTED",
+      "source_refs": [
+        {
+          "path": "packages/features/eventtypes/components/tabs/limits/EventLimitsTab.tsx",
+          "line_start": 48,
+          "line_end": 49,
+          "sha256": "e895c3e7e26cbd0eb790d59012c0ff4fe0cff76e66d5a490a9c74e37a8a84fe0"
+        },
+        {
+          "path": "packages/features/eventtypes/components/tabs/limits/EventLimitsTab.tsx",
+          "line_start": 490,
+          "line_end": 572,
+          "sha256": "e895c3e7e26cbd0eb790d59012c0ff4fe0cff76e66d5a490a9c74e37a8a84fe0"
+        }
+      ],
+      "database_mapping": [
+        {
+          "relation": "EventType",
+          "fields": [
+            "beforeBuffer",
+            "afterBuffer"
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "R2",
+      "claim": "afterBuffer semantics: the period immediately after an existing booking's end is unavailable (test comment: 05:30 unavailable because of afterBuffer(120 mins) of an existing booking occupying 4:00-5:59).",
+      "status": "SUPPORTED",
+      "source_refs": [
+        {
+          "path": "apps/web/test/lib/getSchedule.test.ts",
+          "line_start": 1283,
+          "line_end": 1283,
+          "sha256": "7114fa1fc0b2e4b99bf733092530578fd4e5841b56febabd4216d6becb5c4273"
+        },
+        {
+          "path": "apps/web/test/lib/getSchedule.test.ts",
+          "line_start": 1415,
+          "line_end": 1415,
+          "sha256": "7114fa1fc0b2e4b99bf733092530578fd4e5841b56febabd4216d6becb5c4273"
+        }
+      ],
+      "database_mapping": [
+        {
+          "relation": "Booking",
+          "fields": [
+            "Booking.start",
+            "Booking.end",
+            "EventType.afterBuffer"
+          ]
+        },
+        {
+          "relation": "EventType",
+          "fields": [
+            "Booking.start",
+            "Booking.end",
+            "EventType.afterBuffer"
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "R3",
+      "claim": "beforeBuffer semantics: a candidate window's start is rejected if the beforeBuffer period preceding it overlaps an existing booking (test comment: 08:30 unavailable because of beforeBuffer(120 mins) of the possible booking at 08:30).",
+      "status": "SUPPORTED",
+      "source_refs": [
+        {
+          "path": "apps/web/test/lib/getSchedule.test.ts",
+          "line_start": 1349,
+          "line_end": 1349,
+          "sha256": "7114fa1fc0b2e4b99bf733092530578fd4e5841b56febabd4216d6becb5c4273"
+        },
+        {
+          "path": "apps/web/test/lib/getSchedule.test.ts",
+          "line_start": 1416,
+          "line_end": 1416,
+          "sha256": "7114fa1fc0b2e4b99bf733092530578fd4e5841b56febabd4216d6becb5c4273"
+        }
+      ],
+      "database_mapping": [
+        {
+          "relation": "Booking",
+          "fields": [
+            "Booking.start",
+            "Booking.end",
+            "EventType.beforeBuffer"
+          ]
+        },
+        {
+          "relation": "EventType",
+          "fields": [
+            "Booking.start",
+            "Booking.end",
+            "EventType.beforeBuffer"
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "R4",
+      "claim": "Offerable windows for an event type are produced by the tRPC viewer.availability endpoints (list / user / calendarOverlay); the buffer filtering for event type 901002 would live in that availability pipeline.",
+      "status": "INFERRED",
+      "source_refs": [
+        {
+          "path": "packages/trpc/server/routers/viewer/availability/list.handler.ts",
+          "line_start": 1,
+          "line_end": 1,
+          "sha256": "9c35e3ed90a2dc26eda551c0a863f355e70635ad5684df3c16beb11dfd0b4b84"
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/availability/user.handler.ts",
+          "line_start": 1,
+          "line_end": 1,
+          "sha256": "7aac7484468b83e1e29caeb4dbd496aa59957a4ec8408090e6e5636797ca6a13"
+        }
+      ],
+      "database_mapping": [
+        {
+          "relation": "EventType",
+          "fields": [
+            "EventType.id",
+            "EventType.beforeBuffer",
+            "EventType.afterBuffer",
+            "Booking.eventTypeId",
+            "Booking.start",
+            "Booking.end"
+          ]
+        },
+        {
+          "relation": "Booking",
+          "fields": [
+            "EventType.id",
+            "EventType.beforeBuffer",
+            "EventType.afterBuffer",
+            "Booking.eventTypeId",
+            "Booking.start",
+            "Booking.end"
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "R5",
+      "claim": "The specific identifiers in the task (event type id 901002, booking slug/record BENCH-BUF-EXISTING, and the three proposed 2026-11-03 windows) have no code-defined rules; repository greps for '901002' and 'BENCH-BUF' returned zero matches. Whether each window is offerable depends on data values (event type 901002's beforeBuffer/afterBuffer and the existing booking's start/end), so the answer is not determined by code alone.",
+      "status": "UNRESOLVED",
+      "source_refs": [],
+      "database_mapping": [
+        {
+          "relation": "EventType",
+          "fields": [
+            "EventType.id",
+            "EventType.beforeBuffer",
+            "EventType.afterBuffer",
+            "Booking.start",
+            "Booking.end"
+          ]
+        },
+        {
+          "relation": "Booking",
+          "fields": [
+            "EventType.id",
+            "EventType.beforeBuffer",
+            "EventType.afterBuffer",
+            "Booking.start",
+            "Booking.end"
+          ]
+        }
+      ]
+    }
+  ],
+  "unresolved_questions": [
+    "R1: Exact option minute values are built in code at lines 501-567 but the chosen value for event type 901002 is data, not code.",
+    "R2: Evidence is from a test file documenting getSchedule behavior; the production availability handler source was not read in this session.",
+    "R3: Same as R2: semantics evidenced by test comments, not by reading the handler that computes the windows.",
+    "R4: No code inside these handlers was examined; the claim that buffer filtering is applied there is inferred from their names and the task domain.",
+    "R5: Negative evidence from exhaustive-repo greps in this session; resolution requires reading the actual EventType/Booking rows, which this role does not do."
+  ],
+  "repository_revision": "176037d0afbe572f870a3c702985e7cd83fe6c0c",
+  "producer": {
+    "role": "project-understanding",
+    "model": "qwen3.8-27b",
+    "adapter": "native-qwen-readonly"
+  },
+  "artifact_sha256": "5af2c67b6cea2c748ddfc7bfab6467b80e3586db94916c1e669e177a263f43a3"
+}

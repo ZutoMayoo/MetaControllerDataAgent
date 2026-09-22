@@ -1,0 +1,17 @@
+{
+  "role": "project-understanding",
+  "adapter": "native-qwen-readonly",
+  "model": "qwen3.8-27b",
+  "status": "SUCCESS",
+  "allowed_tools": [
+    "read_file",
+    "glob",
+    "grep"
+  ],
+  "audit": [
+    {
+      "turn": "offline-contract-recovery",
+      "tool_calls": []
+    }
+  ]
+}

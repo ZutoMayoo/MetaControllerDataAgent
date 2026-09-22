@@ -1,0 +1,4 @@
+{
+  "result": "ERROR:  syntax error at or near \"\\\"\nLINE 1: WITH et AS (\\n  SELECT \"id\", \"length\", \"beforeEventBuffer\", ...\n                    ^",
+  "truncated": false
+}

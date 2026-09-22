@@ -1,0 +1,108 @@
+[
+  {
+    "turn": 1,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-beccf35fd0d5e72e",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_schema='public' ORDER BY table_name, ordinal_position;\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 2,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-b88f7f26a0998088",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT column_name, data_type FROM information_schema.columns WHERE table_name='EventType' ORDER BY ordinal_position;\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-8d653882c91b707b",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT id, uid, title, userId, eventTypeId, startTime, endTime, status, metadata FROM \\\"Booking\\\" WHERE uid ILIKE '%BENCH-BUF%' OR title ILIKE '%BENCH-BUF%' OR metadata::text ILIKE '%BENCH-BUF%' LIMIT 10;\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 3,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-bb125aefa1ac8656",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT quote_ident(table_name) AS t, quote_ident(column_name) AS c FROM information_schema.columns WHERE table_name IN ('Booking','EventType') ORDER BY table_name, ordinal_position;\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 4,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-8d8436328e277711",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT id, title, slug, \\\"userId\\\", length, \\\"timeZone\\\", \\\"beforeEventBuffer\\\", \\\"afterEventBuffer\\\", \\\"slotInterval\\\" FROM \\\"EventType\\\" WHERE id = 901002;\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-a1577d0b2b1fc056",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT id, uid, title, \\\"userId\\\", \\\"eventTypeId\\\", \\\"startTime\\\", \\\"endTime\\\", status FROM \\\"Booking\\\" WHERE uid ILIKE '%BENCH%' OR title ILIKE '%BENCH%' LIMIT 20;\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 5,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-a6c3cbf9ec14f242",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT id, uid, title, \\\"userId\\\", \\\"eventTypeId\\\", \\\"startTime\\\", \\\"endTime\\\", status FROM \\\"Booking\\\" WHERE uid = 'BENCH-BUF-EXISTING' OR title ILIKE '%BENCH-BUF%';\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 6,
+    "calls": [
+      {
+        "id": "chatcmpl-tool-a5475f146ecc9964",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT b.id, b.uid, b.title, b.\\\"eventTypeId\\\", b.\\\"startTime\\\", b.\\\"endTime\\\", b.status FROM \\\"Booking\\\" b WHERE b.\\\"eventTypeId\\\" IN (901001, 901002) ORDER BY b.\\\"startTime\\\";\"}"
+        }
+      },
+      {
+        "id": "chatcmpl-tool-b0e845bb3ea7eff7",
+        "type": "function",
+        "function": {
+          "name": "query_sql",
+          "arguments": "{\"sql\": \"SELECT btst.uid, btst.\\\"eventTypeId\\\", btst.\\\"startTime\\\", btst.\\\"endTime\\\", btst.\\\"timeStatus\\\", btst.status FROM \\\"BookingTimeStatus\\\" btst WHERE btst.\\\"eventTypeId\\\" IN (901001,901002) OR btst.uid ILIKE '%BUF%' ORDER BY btst.\\\"startTime\\\";\"}"
+        }
+      }
+    ]
+  },
+  {
+    "turn": "finalizer",
+    "calls": []
+  }
+]

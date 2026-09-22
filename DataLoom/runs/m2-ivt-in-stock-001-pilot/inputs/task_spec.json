@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.1",
+  "task_id": "IVT-IN-STOCK-001",
+  "adapter": "code-aware",
+  "task_kind": "code_aware_sql",
+  "public_assets": [
+    "generated/sanitized_task_statement.md",
+    "inventree/source/inventree-1.5.4"
+  ],
+  "access_policy": {
+    "repository_read": true,
+    "database_read_only": true,
+    "gold_and_validation_visible_to_inference": false
+  },
+  "evaluator": {
+    "mode": "host_only",
+    "inference_feedback": false
+  },
+  "extensions": {
+    "project": "inventree",
+    "repository_root": "D:\\GraduationProject\\ProgressReport\\P9\\Code-awareBenchmark\\inventree\\source\\inventree-1.5.4",
+    "repository_revision": "d2db7b1fb6cc098099b0518cbf2b156485cbd131",
+    "task_markdown": "列出零件 `CAW Stock Part` 中当前算作“in stock”的序列号，按序列号升序返回，列名 `serial`。业务代码规定：数量为正、未被销售订单占用/安装/消耗、非生产中，且库存状态属于可用状态集合。"
+  }
+}

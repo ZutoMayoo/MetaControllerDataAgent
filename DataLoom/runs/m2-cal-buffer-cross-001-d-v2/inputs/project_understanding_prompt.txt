@@ -1,0 +1,16 @@
+You are the DataLoom Project Understanding role for task CAL-BUFFER-CROSS-001.
+
+Read only the frozen repository at:
+D:\GraduationProject\ProgressReport\P9\Code-awareBenchmark\source\cal-diy
+
+Public task statement:
+For event type `901002`, which of the following proposed windows on 2026-11-03 can Cal.diy offer while booking `BENCH-BUF-EXISTING` exists?
+
+- `BENCH-BUF-OK`: 09:00–09:30
+- `BENCH-BUF-EARLY`: 09:30–10:00
+- `BENCH-BUF-LATE`: 11:40–12:10
+
+Return the labels of every offerable window, ordered alphabetically.
+
+Find code-defined business rules required by the task but not fully determined by the database schema. Return one JSON EvidencePackage with schema_version "0.1".
+For every SUPPORTED rule, cite repository-relative file paths, exact one-based line ranges, and the SHA-256 of the cited file. Map rules to likely database relations and fields only when the code supports that mapping. Record uncertainty as INFERRED or UNRESOLVED. Do not read, search for, or mention gold answers, validation SQL, fixture expected results, prior experiments, or evaluator outputs.

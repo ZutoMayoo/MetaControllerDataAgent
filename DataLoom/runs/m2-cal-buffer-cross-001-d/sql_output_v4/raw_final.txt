@@ -1,0 +1,26 @@
+
+
+I'll start by inspecting the database schema to understand the tables involved.
+
+
+
+
+Let me try a simpler query to inspect the schema.
+
+
+
+
+This is a Cal.com schema. Let me inspect the relevant tables' columns.
+
+
+
+
+EventType uses `beforeEventBuffer`/`afterEventBuffer`. Let me find the event type 901002 and the booking BENCH-BUF-EXISTING.
+
+
+
+
+Case-sensitive identifiers — need to double-quote everything.
+
+
+

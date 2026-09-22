@@ -50,6 +50,13 @@
         "evidence_validation": "PASS",
         "note": "This validates the gold-free project-understanding and provenance path only; no SQL candidate or official task score was produced."
       },
+      "evidence_quality_gate": {
+        "version": "0.2",
+        "status": "IMPLEMENTED_OFFLINE",
+        "branch": "feat/production-evidence-gate",
+        "record": "M2_项目理解证据强化记录.md",
+        "benchmark_rerun": "NOT_RUN"
+      },
       "depends_on": ["M1"]
     },
     {

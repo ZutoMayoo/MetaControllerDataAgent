@@ -151,8 +151,11 @@ Read only the frozen repository at:
 Public task statement:
 {extension['task_markdown']}
 
-Find code-defined business rules required by the task but not fully determined by the database schema. Return one JSON EvidencePackage with schema_version \"0.1\".
-For every SUPPORTED rule, cite repository-relative file paths, exact one-based line ranges, and the SHA-256 of the cited file. Map rules to likely database relations and fields only when the code supports that mapping. Record uncertainty as INFERRED or UNRESOLVED. Do not read, search for, or mention gold answers, validation SQL, fixture expected results, prior experiments, or evaluator outputs.
+Identify every task-critical decision that can change the answer and trace it to the production implementation. Treat tests, UI code, and documentation as leads or examples, not sufficient evidence for a core production rule. Return one JSON EvidencePackage with schema_version \"0.2\".
+
+Mark each rule criticality as CORE or SUPPORTING. For every source reference, classify evidence_kind and what it supports. Every CORE rule must cite PRODUCTION_CODE that supports DECISION_IMPLEMENTATION and must include decision_semantics with named inputs, each input's role and fields, the predicate, and explicit boundary behavior. Map rules to database relations and fields only when repository evidence supports that mapping. If any core decision cannot be established from production code, mark it UNRESOLVED; the controller will make the package INCOMPLETE and block downstream SQL generation.
+
+Do not use common expectations to fill missing behavior. Do not read, search for, or mention gold answers, validation SQL, fixture expected results, prior experiments, or evaluator outputs.
 """
 
 

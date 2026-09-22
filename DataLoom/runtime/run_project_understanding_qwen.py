@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from contracts import canonical_json_sha256, sha256_file, validate_evidence_package
+from contracts import canonical_json_sha256, evidence_readiness, sha256_file, validate_evidence_package
 
 
 TEXT_SUFFIXES = {".py", ".js", ".ts", ".tsx", ".jsx", ".java", ".go", ".rb", ".php", ".cs", ".sql", ".md", ".yml", ".yaml", ".json"}
@@ -149,7 +149,11 @@ def normalize_model_package(value: dict[str, Any]) -> dict[str, Any]:
                     if not match:
                         raise ValueError("evidence reference needs an explicit line range")
                     line_start, line_end = int(match.group(1)), int(match.group(2))
-            source_refs.append({"path": ref.get("path"), "line_start": line_start, "line_end": line_end})
+            source_ref = {"path": ref.get("path"), "line_start": line_start, "line_end": line_end}
+            for key in ("symbol", "evidence_kind", "supports"):
+                if isinstance(ref.get(key), str):
+                    source_ref[key] = ref[key]
+            source_refs.append(source_ref)
         mappings = raw.get("database_mapping", raw.get("db_mapping", []))
         if isinstance(mappings, dict):
             mappings = [mappings]
@@ -167,9 +171,12 @@ def normalize_model_package(value: dict[str, Any]) -> dict[str, Any]:
             "rule_id": raw.get("rule_id", raw.get("id")),
             "claim": raw.get("claim", raw.get("statement")),
             "status": raw.get("status"),
+            "criticality": raw.get("criticality"),
             "source_refs": source_refs,
             "database_mapping": database_mapping,
         }
+        if isinstance(raw.get("decision_semantics"), dict):
+            rule["decision_semantics"] = raw["decision_semantics"]
         for key in ("conditions", "exceptions"):
             if isinstance(raw.get(key), list) and all(isinstance(item, str) for item in raw[key]):
                 rule[key] = raw[key]
@@ -182,7 +189,7 @@ def normalize_model_package(value: dict[str, Any]) -> dict[str, Any]:
 
 
 def enrich(package: dict[str, Any], root: Path, task_id: str, revision: str, model: str) -> dict[str, Any]:
-    package = dict(package); package.update({"schema_version": "0.1", "task_id": task_id, "repository_revision": revision})
+    package = dict(package); package.update({"schema_version": "0.2", "task_id": task_id, "repository_revision": revision})
     package.setdefault("unresolved_questions", []); package.setdefault("producer", {"role": "project-understanding", "model": model, "adapter": "native-qwen-readonly"})
     if not isinstance(package.get("rules"), list): raise ValueError("rules must be a list")
     for rule in package["rules"]:
@@ -194,6 +201,7 @@ def enrich(package: dict[str, Any], root: Path, task_id: str, revision: str, mod
             source = inside(ref["path"], root)
             if not source.is_file(): raise ValueError("cited source is not a file")
             ref["path"] = source.relative_to(root).as_posix(); ref["sha256"] = sha256_file(source)
+    package["readiness"] = evidence_readiness(package)
     package.pop("artifact_sha256", None); package["artifact_sha256"] = canonical_json_sha256(package)
     validate_evidence_package(package, root)
     return package
@@ -204,11 +212,17 @@ def main() -> int:
     parser.add_argument("--task-spec", type=Path, required=True); parser.add_argument("--prompt", type=Path, required=True)
     parser.add_argument("--repository", type=Path, required=True); parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--model", required=True); parser.add_argument("--max-turns", type=int, default=20)
+    parser.add_argument("--skill", type=Path, action="append", default=[], help="trusted project-understanding SKILL.md to inject")
     parser.add_argument("--conversation", type=Path, help="offline recovery from a previously audited model conversation")
     args = parser.parse_args(); output = args.output_dir; output.mkdir(parents=True, exist_ok=True)
     spec = json.loads(args.task_spec.read_text(encoding="utf-8")); extension = spec["extensions"]; root = args.repository.resolve()
     prompt = args.prompt.read_text(encoding="utf-8").replace(str(extension["repository_root"]), str(root))
-    prompt += "\nUse at most 8 tool turns, then return JSON only with at most 5 rules. The controller will compute source SHA-256 values; provide path and exact line ranges."
+    skill_records = []
+    for skill_path in args.skill:
+        skill_text = skill_path.read_text(encoding="utf-8")
+        skill_records.append({"path": str(skill_path), "sha256": hashlib.sha256(skill_text.encode("utf-8")).hexdigest()})
+        prompt += f"\n\nSelected project-understanding skill:\n{skill_text}"
+    prompt += "\nUse at most 8 tool turns, then return JSON only with at most 5 rules. The controller will compute source SHA-256 values; provide path and exact line ranges. For schema 0.2 include criticality, evidence_kind, supports, and complete decision_semantics for every CORE rule."
     messages: list[dict[str, Any]] = [{"role": "user", "content": prompt}]; audit: list[dict[str, Any]] = []
     repository = ReadOnlyRepository(root); endpoint = os.environ.get("DATALOOM_QWEN_URL", "http://host.docker.internal:18020/v1/chat/completions")
     status = "FAILED"
@@ -231,7 +245,7 @@ def main() -> int:
                     observation = {"error": f"{type(exc).__name__}: {exc}"}
                 messages.append({"role": "tool", "tool_call_id": call["id"], "content": json.dumps(observation, ensure_ascii=False)})
             if turn >= min(8, args.max_turns - 1):
-                messages.append({"role": "user", "content": "Tool budget is complete. Do not call tools. Return only one concise JSON EvidencePackage now, with supported rules grounded in the files and exact lines you already read."})
+                messages.append({"role": "user", "content": "Tool budget is complete. Do not call tools. Return only one concise schema 0.2 JSON EvidencePackage now. Keep a core rule unresolved rather than using test, UI, or documentation as its production implementation."})
                 final = invoke(endpoint, {"model": args.model, "messages": messages, "max_tokens": 8192})
                 final_message = final["choices"][0]["message"]
                 messages.append({"role": final_message.get("role", "assistant"), "content": final_message.get("content")})
@@ -247,7 +261,7 @@ def main() -> int:
         status = "FAILED"; (output / "failure.json").write_text(json.dumps({"error_type": type(exc).__name__, "error": str(exc)}, ensure_ascii=False, indent=2), encoding="utf-8")
         raise
     finally:
-        (output / "role_audit.json").write_text(json.dumps({"role": "project-understanding", "adapter": "native-qwen-readonly", "model": args.model, "status": status, "allowed_tools": ["read_file", "glob", "grep"], "audit": audit}, ensure_ascii=False, indent=2), encoding="utf-8")
+        (output / "role_audit.json").write_text(json.dumps({"role": "project-understanding", "adapter": "native-qwen-readonly", "model": args.model, "status": status, "allowed_tools": ["read_file", "glob", "grep"], "skills": skill_records, "audit": audit}, ensure_ascii=False, indent=2), encoding="utf-8")
         (output / "conversation.json").write_text(json.dumps(messages, ensure_ascii=False, indent=2), encoding="utf-8")
     return 0
 

@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse, json, os, re, subprocess, urllib.request
 from pathlib import Path
 
+from contracts import require_ready_for_handoff
+
 FORBIDDEN = re.compile(r"\b(insert|update|delete|drop|alter|create|grant|revoke|copy|call|do|truncate|vacuum)\b|;", re.I)
 
 def sql_tool(sql: str) -> dict:
@@ -25,6 +27,7 @@ def call(messages, model, tools=True):
 def main():
     p=argparse.ArgumentParser();p.add_argument("--task-spec",type=Path,required=True);p.add_argument("--evidence",type=Path,required=True);p.add_argument("--output",type=Path,required=True);p.add_argument("--model",required=True);a=p.parse_args(); a.output.mkdir(parents=True,exist_ok=True)
     spec=json.loads(a.task_spec.read_text(encoding="utf-8")); evidence=json.loads(a.evidence.read_text(encoding="utf-8"))
+    require_ready_for_handoff(evidence)
     prompt=f'''You are a PostgreSQL SQL generation role. Public task:\n{spec["extensions"]["task_markdown"]}\n\nTrusted project-understanding evidence:\n{json.dumps(evidence,ensure_ascii=False)}\n\nYou may inspect and query only the database through query_sql. Never request files, fixtures, validation, Gold, Docker, credentials, or non-read-only SQL. Your job is incomplete unless you submit one executable PostgreSQL SELECT/WITH query. At most 6 tool turns. At the final turn output only one SQL statement in a ```sql code block; no explanation, no JSON, and no more tool calls.'''
     messages=[{"role":"user","content":prompt}]; audit=[]; response_text=[]
     for turn in range(1,10):

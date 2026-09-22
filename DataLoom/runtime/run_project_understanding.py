@@ -20,7 +20,7 @@ from typing import Any
 
 from claude_agent_sdk import AssistantMessage, ClaudeAgentOptions, TextBlock, query
 
-from contracts import canonical_json_sha256, sha256_file, validate_evidence_package
+from contracts import canonical_json_sha256, evidence_readiness, sha256_file, validate_evidence_package
 
 
 def _last_json_object(messages: list[str]) -> dict[str, Any]:
@@ -57,7 +57,7 @@ def _canonical_relative(path: str, repository: Path) -> Path:
 def _enrich_and_validate(package: dict[str, Any], repository: Path, task_id: str, revision: str) -> dict[str, Any]:
     """Attach deterministic file hashes; reject malformed model evidence."""
     package = dict(package)
-    package["schema_version"] = "0.1"
+    package["schema_version"] = "0.2"
     package["task_id"] = task_id
     package["repository_revision"] = revision
     package.setdefault("unresolved_questions", [])
@@ -79,6 +79,7 @@ def _enrich_and_validate(package: dict[str, Any], repository: Path, task_id: str
             source = _canonical_relative(reference["path"], repository)
             reference["path"] = source.relative_to(repository).as_posix()
             reference["sha256"] = sha256_file(source)
+    package["readiness"] = evidence_readiness(package)
     package.pop("artifact_sha256", None)
     package["artifact_sha256"] = canonical_json_sha256(package)
     validate_evidence_package(package, repository)
@@ -121,6 +122,8 @@ def main() -> int:
     parser.add_argument("--repository", type=Path, required=True)
     parser.add_argument("--model", required=True)
     parser.add_argument("--max-turns", type=int, default=20)
+    parser.add_argument("--skill", type=Path, action="append", default=[],
+                        help="trusted project-understanding SKILL.md to inject")
     args = parser.parse_args()
     spec = json.loads(args.task_spec.read_text(encoding="utf-8"))
     extension = spec["extensions"]
@@ -134,6 +137,11 @@ def main() -> int:
     prompt = args.prompt.read_text(encoding="utf-8").replace(
         str(extension["repository_root"]), str(repository)
     )
+    skill_records = []
+    for skill_path in args.skill:
+        skill_text = skill_path.read_text(encoding="utf-8")
+        skill_records.append({"path": str(skill_path), "sha256": hashlib.sha256(skill_text.encode("utf-8")).hexdigest()})
+        prompt += f"\n\nSelected project-understanding skill:\n{skill_text}"
     started = datetime.now(timezone.utc).isoformat()
     try:
         messages, transcript = asyncio.run(run(
@@ -147,7 +155,7 @@ def main() -> int:
         raise
     (output / "role_audit.json").write_text(json.dumps({
         "role": "project-understanding", "started_at": started,
-        "model": args.model, "allowed_tools": ["Read", "Glob", "Grep"],
+        "model": args.model, "allowed_tools": ["Read", "Glob", "Grep"], "skills": skill_records,
         "transcript": transcript,
     }, ensure_ascii=False, indent=2), encoding="utf-8")
     (output / "raw_model_messages.json").write_text(json.dumps(messages, ensure_ascii=False, indent=2), encoding="utf-8")

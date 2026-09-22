@@ -8,7 +8,6 @@ three deterministic, repository-confined read tools to the model.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import re
@@ -18,27 +17,18 @@ from pathlib import Path
 from typing import Any
 
 from contracts import canonical_json_sha256, evidence_readiness, sha256_file, validate_evidence_package
+from context_projection import ProjectionPolicy, project_search_matches
+from workspace_guard import WorkspaceGuard
 
 
 TEXT_SUFFIXES = {".py", ".js", ".ts", ".tsx", ".jsx", ".java", ".go", ".rb", ".php", ".cs", ".sql", ".md", ".yml", ".yaml", ".json"}
 SKIP_DIRS = {".git", "node_modules", "vendor", "dist", "build", ".venv", "__pycache__"}
 
 
-def inside(path: str, root: Path) -> Path:
-    candidate = Path(path)
-    if candidate.is_absolute() or ".." in candidate.parts:
-        raise ValueError("path must be repository-relative")
-    resolved = (root / candidate).resolve()
-    try:
-        resolved.relative_to(root.resolve())
-    except ValueError as exc:
-        raise ValueError("path escapes repository") from exc
-    return resolved
-
-
 class ReadOnlyRepository:
     def __init__(self, root: Path):
-        self.root = root.resolve()
+        self.guard = WorkspaceGuard(root)
+        self.root = self.guard.root
 
     def _files(self):
         for path in self.root.rglob("*"):
@@ -48,7 +38,7 @@ class ReadOnlyRepository:
                 yield path
 
     def read_file(self, path: str, line_start: int = 1, line_end: int = 240) -> dict[str, Any]:
-        source = inside(path, self.root)
+        source = self.guard.resolve(path)
         if not source.is_file() or source.suffix.casefold() not in TEXT_SUFFIXES:
             raise ValueError("requested path is not an allowed text source file")
         lines = source.read_text(encoding="utf-8", errors="replace").splitlines()
@@ -65,13 +55,23 @@ class ReadOnlyRepository:
                 continue
             if path.is_file() and path.suffix.casefold() in TEXT_SUFFIXES:
                 paths.append(path.relative_to(self.root).as_posix())
-        return {"paths": sorted(paths)[:max(1, min(int(limit), 100))]}
+        requested = max(1, min(int(limit), 100))
+        selected = sorted(paths)[:requested]
+        return {
+            "paths": selected,
+            "truncation": {
+                "truncated": len(paths) > len(selected),
+                "original_items": len(paths),
+                "returned_items": len(selected),
+            },
+        }
 
     def grep(self, query: str, path_glob: str = "**/*", limit: int = 80) -> dict[str, Any]:
         if len(query) > 300:
             raise ValueError("query is too long")
         expression = re.compile(query, re.I)
         matches = []
+        requested = max(1, min(int(limit), 80))
         for path in self.root.glob(path_glob):
             if any(part in SKIP_DIRS for part in path.relative_to(self.root).parts):
                 continue
@@ -79,10 +79,14 @@ class ReadOnlyRepository:
                 continue
             for line_number, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
                 if expression.search(line):
-                    matches.append({"path": path.relative_to(self.root).as_posix(), "line": line_number, "text": line[:500]})
-                    if len(matches) >= max(1, min(int(limit), 80)):
-                        return {"matches": matches}
-        return {"matches": matches}
+                    matches.append({"path": path.relative_to(self.root).as_posix(), "line": line_number, "text": line})
+                    if len(matches) > requested:
+                        return project_search_matches(
+                            matches, ProjectionPolicy(max_items=requested, max_chars=12000, max_item_chars=500)
+                        )
+        return project_search_matches(
+            matches, ProjectionPolicy(max_items=requested, max_chars=12000, max_item_chars=500)
+        )
 
 
 TOOLS = [
@@ -234,6 +238,7 @@ def main() -> int:
     skill_records = []
     for skill_path in args.skill:
         skill_text = skill_path.read_text(encoding="utf-8")
+        import hashlib
         skill_records.append({"path": str(skill_path), "sha256": hashlib.sha256(skill_text.encode("utf-8")).hexdigest()})
         prompt += f"\n\nSelected project-understanding skill:\n{skill_text}"
     prompt += "\nUse at most 8 tool turns, then return JSON only with at most 5 rules. The controller will compute source SHA-256 values; provide path and exact line ranges. For schema 0.2 include criticality, evidence_kind, supports, and complete decision_semantics for every CORE rule."

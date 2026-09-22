@@ -1,0 +1,4 @@
+{
+  "error_type": "ContractError",
+  "error": "missing required field: rules[0].claim"
+}

@@ -154,7 +154,9 @@ def normalize_model_package(value: dict[str, Any]) -> dict[str, Any]:
                 if isinstance(ref.get(key), str):
                     source_ref[key] = ref[key]
             source_refs.append(source_ref)
-        mappings = raw.get("database_mapping", raw.get("db_mapping", []))
+        mappings = raw.get("database_mapping", raw.get("db_mapping", raw.get("schema_mapping", [])))
+        if mappings is None:
+            mappings = []
         if isinstance(mappings, dict):
             mappings = [mappings]
         if not isinstance(mappings, list):
@@ -169,19 +171,31 @@ def normalize_model_package(value: dict[str, Any]) -> dict[str, Any]:
             database_mapping.extend({"relation": relation, "fields": item.get("fields")} for relation in relations)
         rule = {
             "rule_id": raw.get("rule_id", raw.get("id")),
-            "claim": raw.get("claim", raw.get("statement")),
+            "claim": raw.get("claim", raw.get("statement", raw.get("description"))),
             "status": raw.get("status"),
             "criticality": raw.get("criticality"),
             "source_refs": source_refs,
             "database_mapping": database_mapping,
         }
         if isinstance(raw.get("decision_semantics"), dict):
-            rule["decision_semantics"] = raw["decision_semantics"]
+            semantics = raw["decision_semantics"]
+            inputs = []
+            if isinstance(semantics.get("inputs"), list):
+                for item in semantics["inputs"]:
+                    if isinstance(item, dict):
+                        inputs.append({key: item.get(key) for key in ("name", "role", "fields")})
+            rule["decision_semantics"] = {
+                "inputs": inputs,
+                "predicate": semantics.get("predicate"),
+                "boundary_behavior": semantics.get("boundary_behavior"),
+            }
         for key in ("conditions", "exceptions"):
             if isinstance(raw.get(key), list) and all(isinstance(item, str) for item in raw[key]):
                 rule[key] = raw[key]
         if isinstance(raw.get("uncertainty"), str):
             unresolved.append(f"{rule['rule_id']}: {raw['uncertainty']}")
+        if isinstance(raw.get("unresolved_reason"), str):
+            unresolved.append(f"{rule['rule_id']}: {raw['unresolved_reason']}")
         converted.append(rule)
     normalized["rules"] = converted
     normalized["unresolved_questions"] = unresolved

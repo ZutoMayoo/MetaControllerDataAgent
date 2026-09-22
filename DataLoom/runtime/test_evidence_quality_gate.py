@@ -129,6 +129,20 @@ class EvidenceQualityGateTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "requires EvidencePackage 0.2"):
             require_ready_for_handoff(package)
 
+    def test_unresolved_core_rule_may_preserve_an_empty_schema_mapping(self) -> None:
+        package = self._package("DOCUMENTATION", "BEHAVIORAL_EXAMPLE", "src/policy.py")
+        rule = package["rules"][0]
+        rule["status"] = "UNRESOLVED"
+        rule["database_mapping"] = []
+        rule.pop("decision_semantics")
+        package["readiness"] = evidence_readiness(package)
+        package["artifact_sha256"] = canonical_json_sha256(
+            {key: value for key, value in package.items() if key != "artifact_sha256"}
+        )
+        validate_evidence_package(package, self.repository)
+        with self.assertRaisesRegex(ContractError, "INCOMPLETE"):
+            require_ready_for_handoff(package)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,192 @@
+{
+  "schema_version": "0.2",
+  "task_id": "CAL-BUFFER-CROSS-001",
+  "rules": [
+    {
+      "rule_id": "R1-overlap-predicate",
+      "claim": "Whether a proposed window [proposed_start, proposed_end] is offerable given existing busy intervals on the same date. The deciding expression is the temporal overlap test between the proposed interval and each busy interval.",
+      "status": "UNRESOLVED",
+      "criticality": "CORE",
+      "source_refs": [
+        {
+          "path": "apps/api/v2/src/lib/services/available-slots.service.ts",
+          "line_start": 1,
+          "line_end": 53,
+          "evidence_kind": "PRODUCTION_CODE",
+          "supports": "DECISION_IMPLEMENTATION",
+          "sha256": "62947ab1ba599a562f5d64f7b69ec7e6389ed694c03570641b8acdb5bfc40dfa"
+        },
+        {
+          "path": "apps/api/v2/src/lib/services/busy-times.service.ts",
+          "line_start": 1,
+          "line_end": 13,
+          "evidence_kind": "PRODUCTION_CODE",
+          "supports": "DECISION_IMPLEMENTATION",
+          "sha256": "035331b21c48544b5692334893a7eb84fbae3678567dd691115f0cbc6b3aeecb"
+        }
+      ],
+      "database_mapping": [],
+      "decision_semantics": {
+        "inputs": [
+          {
+            "name": "proposed_start",
+            "role": "SUBJECT",
+            "fields": [
+              "start_time"
+            ]
+          },
+          {
+            "name": "proposed_end",
+            "role": "SUBJECT",
+            "fields": [
+              "end_time"
+            ]
+          },
+          {
+            "name": "busy_intervals",
+            "role": "EXISTING_STATE",
+            "fields": [
+              "start_time",
+              "end_time"
+            ]
+          }
+        ],
+        "predicate": "window is offerable iff FOR ALL busy_intervals: NOT(proposed_start < busy.end AND proposed_end > busy.start) — exact inequality (strict vs. inclusive at the shared boundary) is unresolved",
+        "boundary_behavior": "UNRESOLVED: Whether a busy interval ending at 09:00 blocks a slot starting at 09:00 (i.e., whether the test uses < vs <= at the boundary) could not be established from production code"
+      }
+    },
+    {
+      "rule_id": "R2-busy-times-scope",
+      "claim": "Which existing bookings produce busy intervals that block the proposed window: status filter (exclude cancelled?), host scoping (same user? same team?), and date-range scoping.",
+      "status": "UNRESOLVED",
+      "criticality": "CORE",
+      "source_refs": [
+        {
+          "path": "apps/api/v2/src/lib/services/busy-times.service.ts",
+          "line_start": 1,
+          "line_end": 13,
+          "evidence_kind": "PRODUCTION_CODE",
+          "supports": "DECISION_IMPLEMENTATION",
+          "sha256": "035331b21c48544b5692334893a7eb84fbae3678567dd691115f0cbc6b3aeecb"
+        }
+      ],
+      "database_mapping": [],
+      "decision_semantics": {
+        "inputs": [
+          {
+            "name": "event_type_id",
+            "role": "SUBJECT",
+            "fields": [
+              "id",
+              "userId",
+              "teamId"
+            ]
+          },
+          {
+            "name": "existing_bookings",
+            "role": "EXISTING_STATE",
+            "fields": [
+              "userId",
+              "eventType",
+              "startTime",
+              "endTime",
+              "status"
+            ]
+          },
+          {
+            "name": "booking_date",
+            "role": "CONTEXT",
+            "fields": [
+              "date"
+            ]
+          }
+        ],
+        "predicate": "busy set = { b ∈ bookings : b.userId ∈ hosts(event_type) AND b.status ∉ {cancelled} AND b overlaps booking_date } — exact status exclusion list and host resolution are unresolved",
+        "boundary_behavior": "UNRESOLVED: Whether 'ACCEPTED' vs 'PENDING' bookings both block slots, and whether team-member bookings all contribute, is not established"
+      }
+    },
+    {
+      "rule_id": "R3-schedule-window",
+      "claim": "A proposed window must lie within the schedule's working hours for that day-of-week and (potentially) align to the slot-interval grid. Windows outside the schedule are unofferable regardless of busy times.",
+      "status": "UNRESOLVED",
+      "criticality": "CORE",
+      "source_refs": [
+        {
+          "path": "apps/api/v2/src/lib/services/available-slots.service.ts",
+          "line_start": 22,
+          "line_end": 51,
+          "evidence_kind": "PRODUCTION_CODE",
+          "supports": "DECISION_IMPLEMENTATION",
+          "sha256": "62947ab1ba599a562f5d64f7b69ec7e6389ed694c03570641b8acdb5bfc40dfa"
+        }
+      ],
+      "database_mapping": [],
+      "decision_semantics": {
+        "inputs": [
+          {
+            "name": "schedule_policy",
+            "role": "CONFIGURATION",
+            "fields": [
+              "days",
+              "startTime",
+              "endTime",
+              "workWeekDays"
+            ]
+          },
+          {
+            "name": "proposed_start",
+            "role": "SUBJECT",
+            "fields": [
+              "start_time"
+            ]
+          },
+          {
+            "name": "proposed_end",
+            "role": "SUBJECT",
+            "fields": [
+              "end_time"
+            ]
+          },
+          {
+            "name": "slot_interval",
+            "role": "CONFIGURATION",
+            "fields": [
+              "interval"
+            ]
+          }
+        ],
+        "predicate": "window is schedule-valid iff proposed_start >= schedule.startTime(day) AND proposed_end <= schedule.endTime(day) AND (proposed_start - schedule.startTime) % interval == 0 — the modulo/grid constraint is unresolved",
+        "boundary_behavior": "UNRESOLVED: Whether a window ending exactly at schedule.endTime is valid (inclusive boundary) and whether off-grid starts are rejected are not established"
+      }
+    }
+  ],
+  "unresolved_questions": [
+    "R1-overlap-predicate: The deciding overlap expression lives in @calcom/platform-libraries/slots (package root at packages/platform/libraries/package.json). The slots subdirectory source files could not be located or read within the 8-turn tool budget; only the NestJS wrapper delegating to the library is visible.",
+    "R2-busy-times-scope: The Prisma query filtering bookings by status, user scope, and date is inside @calcom/platform-libraries/slots; only the repository injection is visible in the wrapper.",
+    "R3-schedule-window: The schedule-to-slot generation algorithm, including boundary inclusivity and interval-grid enforcement, is inside @calcom/platform-libraries/slots."
+  ],
+  "repository_revision": "176037d0afbe572f870a3c702985e7cd83fe6c0c",
+  "producer": {
+    "role": "project-understanding",
+    "model": "qwen3.8-27b",
+    "adapter": "native-qwen-readonly"
+  },
+  "readiness": {
+    "status": "INCOMPLETE",
+    "blockers": [
+      {
+        "code": "CORE_RULE_NOT_SUPPORTED",
+        "rule_id": "R1-overlap-predicate"
+      },
+      {
+        "code": "CORE_RULE_NOT_SUPPORTED",
+        "rule_id": "R2-busy-times-scope"
+      },
+      {
+        "code": "CORE_RULE_NOT_SUPPORTED",
+        "rule_id": "R3-schedule-window"
+      }
+    ]
+  },
+  "artifact_sha256": "ffaf906475392931f1adbd61990170ac45304a88d1369fdebfe30a4eaa706ce0"
+}

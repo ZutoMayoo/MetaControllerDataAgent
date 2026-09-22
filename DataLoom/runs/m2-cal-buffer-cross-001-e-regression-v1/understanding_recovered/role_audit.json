@@ -1,0 +1,31 @@
+{
+  "role": "project-understanding",
+  "adapter": "native-qwen-readonly",
+  "model": "qwen3.8-27b",
+  "status": "SUCCESS",
+  "allowed_tools": [
+    "read_file",
+    "glob",
+    "grep"
+  ],
+  "skills": [
+    {
+      "path": "DataLoom\\skills\\business-rule-tracing\\SKILL.md",
+      "sha256": "d2d5d61321ba9e91a6a9e583fb7e43c6d023dcee1a1de1ab0470fe193d0703d0"
+    },
+    {
+      "path": "DataLoom\\skills\\schema-code-mapping\\SKILL.md",
+      "sha256": "be61872a48bce084e56e9d5e1de465a2dbf66978654b265882935b5071cb403b"
+    },
+    {
+      "path": "DataLoom\\skills\\boundary-and-exception-analysis\\SKILL.md",
+      "sha256": "6984b9222ecf797e7ee5a52c48db0d326927c84a6b785507e8086e48707d41d7"
+    }
+  ],
+  "audit": [
+    {
+      "turn": "offline-contract-recovery",
+      "tool_calls": []
+    }
+  ]
+}

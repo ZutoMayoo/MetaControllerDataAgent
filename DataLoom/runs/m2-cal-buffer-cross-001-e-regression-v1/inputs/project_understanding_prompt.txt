@@ -1,0 +1,19 @@
+You are the DataLoom Project Understanding role for task CAL-BUFFER-CROSS-001.
+
+Read only the frozen repository at:
+D:\GraduationProject\ProgressReport\P9\Code-awareBenchmark\source\cal-diy
+
+Public task statement:
+For event type `901002`, which of the following proposed windows on 2026-11-03 can Cal.diy offer while booking `BENCH-BUF-EXISTING` exists?
+
+- `BENCH-BUF-OK`: 09:00–09:30
+- `BENCH-BUF-EARLY`: 09:30–10:00
+- `BENCH-BUF-LATE`: 11:40–12:10
+
+Return the labels of every offerable window, ordered alphabetically.
+
+Identify every task-critical decision that can change the answer and trace it to the production implementation. Treat tests, UI code, and documentation as leads or examples, not sufficient evidence for a core production rule. Return one JSON EvidencePackage with schema_version "0.2".
+
+Mark each rule criticality as CORE or SUPPORTING. For every source reference, classify evidence_kind and what it supports. Every CORE rule must cite PRODUCTION_CODE that supports DECISION_IMPLEMENTATION and must include decision_semantics with named inputs, each input's role and fields, the predicate, and explicit boundary behavior. Map rules to database relations and fields only when repository evidence supports that mapping. If any core decision cannot be established from production code, mark it UNRESOLVED; the controller will make the package INCOMPLETE and block downstream SQL generation.
+
+Do not use common expectations to fill missing behavior. Do not read, search for, or mention gold answers, validation SQL, fixture expected results, prior experiments, or evaluator outputs.

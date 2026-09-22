@@ -52,9 +52,12 @@
       },
       "evidence_quality_gate": {
         "version": "0.2",
-        "status": "IMPLEMENTED_OFFLINE",
+        "status": "REGRESSION_SAFE_STOP_INCOMPLETE",
         "branch": "feat/production-evidence-gate",
         "record": "M2_项目理解证据强化记录.md",
+        "regression_run": "m2-cal-buffer-cross-001-e-regression-v1",
+        "regression_record": "M2_项目理解证据强化回归结果.md",
+        "sql_handoff": "BLOCKED_AS_DESIGNED",
         "benchmark_rerun": "NOT_RUN"
       },
       "depends_on": ["M1"]

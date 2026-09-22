@@ -71,8 +71,10 @@ def validate_evidence_package(package: dict[str, Any], repository_root: Path) ->
     for index, rule in enumerate(package["rules"]):
         if not isinstance(rule, dict):
             raise ContractError(f"rules[{index}] must be an object")
-        for field in ("rule_id", "claim", "status", "database_mapping"):
+        for field in ("rule_id", "claim", "status"):
             _require(rule.get(field), f"rules[{index}].{field}")
+        if "database_mapping" not in rule or not isinstance(rule["database_mapping"], list):
+            raise ContractError(f"rules[{index}].database_mapping must be a list")
         status = rule["status"]
         if status not in RULE_STATUSES:
             raise ContractError(f"rules[{index}] has invalid status: {status}")
@@ -179,7 +181,11 @@ def _validate_v02_quality_gate(package: dict[str, Any]) -> None:
                 raise ContractError(f"rules[{index}].source_refs[{ref_index}] has invalid or missing evidence_kind")
             if ref.get("supports") not in EVIDENCE_SUPPORTS:
                 raise ContractError(f"rules[{index}].source_refs[{ref_index}] has invalid or missing supports")
-            if ref.get("evidence_kind") == "PRODUCTION_CODE" and ref.get("supports") == "DECISION_IMPLEMENTATION":
+            if (
+                rule.get("status") == "SUPPORTED"
+                and ref.get("evidence_kind") == "PRODUCTION_CODE"
+                and ref.get("supports") == "DECISION_IMPLEMENTATION"
+            ):
                 if not isinstance(ref.get("symbol"), str) or not ref["symbol"].strip():
                     raise ContractError(f"rules[{index}].source_refs[{ref_index}] production decision evidence needs a symbol")
                 normalized_path = str(ref.get("path", "")).replace("\\", "/").casefold()

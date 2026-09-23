@@ -55,6 +55,9 @@ class AdapterProbeTests(unittest.TestCase):
         self.assertTrue(probe["available"])
         self.assertFalse(probe["import_check"]["attempted"])
         self.assertIn("bird_benchmark.run_bird", probe["interface"])
+        isolated = WORKSPACE / "external" / "DataAgent" / "runtime" / "dataagent" / ".venv-dataloom-bird"
+        if isolated.is_dir():
+            self.assertTrue(probe["isolated_environment"])
 
 
 class RouterTests(unittest.TestCase):

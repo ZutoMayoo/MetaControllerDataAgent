@@ -132,15 +132,32 @@ def main() -> int:
     scan.add_argument("--project", type=Path, required=True)
     validate = commands.add_parser("validate-dbt")
     validate.add_argument("--project", type=Path, required=True)
+    bird = commands.add_parser("dry-run-bird")
+    bird.add_argument("--bird-data-dir", type=Path, required=True)
+    bird.add_argument("--dev-json", type=Path, required=True)
+    bird.add_argument("--db-id", required=True)
+    bird.add_argument("--question-id", required=True)
+    bird.add_argument("--model", required=True)
+    bird.add_argument("--api-base", required=True)
+    bird.add_argument("--run-dir", type=Path, required=True)
     args = parser.parse_args()
     orchestrator = DataLoomOrchestrator()
     if args.command == "catalog":
         value = {"routes": orchestrator.routes.catalog(), "capabilities": orchestrator.registry.catalog()}
     elif args.command == "probe":
         value = orchestrator.probe(args.benchmark, import_check=args.import_check)
-    else:
+    elif args.command in {"scan-dbt", "validate-dbt"}:
         action = "spider2-dbt.scan" if args.command == "scan-dbt" else "spider2-dbt.validate"
         value = orchestrator.actions.dispatch(action, {"project": str(args.project)}, scopes={"execute"})
+    else:
+        arguments = [
+            "run", "--mode", "limited",
+            "--bird-data-dir", str(args.bird_data_dir), "--dev-json", str(args.dev_json),
+            "--db-id", args.db_id, "--question-id", args.question_id,
+            "--model", args.model, "--api-base", args.api_base,
+            "--run-dir", str(args.run_dir), "--preprocess", "skip", "--no-retry",
+        ]
+        value = orchestrator.run("bird", {"arguments": arguments})
     print(json.dumps(value, ensure_ascii=False, indent=2))
     return 0
 

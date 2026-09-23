@@ -120,8 +120,20 @@ class DataAgentBirdAdapter:
     ENTRY = Path("runtime/dataagent/dataagent/core/suite/builtin_suites/bird_benchmark/run_bird.py")
     README = Path("runtime/dataagent/dataagent/core/suite/builtin_suites/bird_benchmark/README.md")
 
-    def __init__(self, root: Path, expected_revision: str | None = None) -> None:
+    def __init__(
+        self,
+        root: Path,
+        expected_revision: str | None = None,
+        python_executable: Path | None = None,
+    ) -> None:
         self.component = ExternalComponent("DataAgent", root, "Apache-2.0", expected_revision)
+        isolated = root / "runtime/dataagent/.venv-dataloom-bird/Scripts/python.exe"
+        self.python_executable = (
+            python_executable.resolve(strict=True)
+            if python_executable is not None
+            else isolated.resolve() if isolated.is_file()
+            else Path(sys.executable).resolve()
+        )
 
     @property
     def package_root(self) -> Path:
@@ -132,7 +144,8 @@ class DataAgentBirdAdapter:
         manifest = self.component.manifest(files)
         manifest.update({
             "available": all(path.is_file() for path in files),
-            "interface": f"{sys.executable} -m {self.MODULE}",
+            "interface": f"{self.python_executable} -m {self.MODULE}",
+            "isolated_environment": ".venv-dataloom-bird" in self.python_executable.parts,
             "import_check": {"attempted": False},
         })
         if import_check:
@@ -146,7 +159,7 @@ class DataAgentBirdAdapter:
         return manifest
 
     def command(self, arguments: Iterable[str]) -> list[str]:
-        return [sys.executable, "-m", self.MODULE, *list(arguments)]
+        return [str(self.python_executable), "-m", self.MODULE, *list(arguments)]
 
     def dry_run(self, arguments: Iterable[str], *, timeout: int = 60) -> dict[str, Any]:
         args = list(arguments)

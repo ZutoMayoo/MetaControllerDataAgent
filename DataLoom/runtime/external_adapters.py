@@ -146,6 +146,7 @@ class DataAgentBirdAdapter:
             "available": all(path.is_file() for path in files),
             "interface": f"{self.python_executable} -m {self.MODULE}",
             "isolated_environment": ".venv-dataloom-bird" in self.python_executable.parts,
+            "gold_isolation": self.audit_gold_isolation(),
             "import_check": {"attempted": False},
         })
         if import_check:
@@ -157,6 +158,49 @@ class DataAgentBirdAdapter:
                 "observation": project_text((result.stdout or "") + (result.stderr or ""), max_chars=4000),
             }
         return manifest
+
+    def audit_gold_isolation(self) -> dict[str, Any]:
+        """Fail closed when the upstream runner materializes Gold before inference.
+
+        Importability is not sufficient for a production benchmark adapter. The
+        pinned upstream runner currently writes both the full question object
+        and ``gold.sql`` before ``agent.chat``. This deterministic audit keeps
+        live execution blocked until a split-process adapter is in place.
+        """
+        source_path = self.component.root / self.ENTRY.parent / "test_bird_e2e.py"
+        source = source_path.read_text(encoding="utf-8")
+        chat = source.find("agent.chat(")
+        findings: list[dict[str, Any]] = []
+        markers = {
+            "GOLD_FILE_BEFORE_INFERENCE": '(case_dir / "gold.sql").write_text',
+            "FULL_QUESTION_BEFORE_INFERENCE": '_write_json(case_dir / "question.json", item)',
+        }
+        for code, marker in markers.items():
+            position = source.find(marker)
+            if position >= 0 and chat >= 0 and position < chat:
+                findings.append({
+                    "code": code,
+                    "line": source.count("\n", 0, position) + 1,
+                    "source": source_path.relative_to(self.component.root).as_posix(),
+                })
+        worker_source = (self.component.root / self.ENTRY).read_text(encoding="utf-8")
+        worker_marker = "_write(question_path, questions[index::count])"
+        worker_position = worker_source.find(worker_marker)
+        if worker_position >= 0:
+            findings.append({
+                "code": "FULL_QUESTION_COPIED_TO_WORKER",
+                "line": worker_source.count("\n", 0, worker_position) + 1,
+                "source": self.ENTRY.as_posix(),
+            })
+        return {
+            "status": "BLOCKED" if findings else "PASS",
+            "safe_for_live_inference": not findings,
+            "findings": findings,
+            "required_remediation": (
+                "sanitized inference bundle in an isolated process/container, followed by host-only evaluation"
+                if findings else None
+            ),
+        }
 
     def command(self, arguments: Iterable[str]) -> list[str]:
         return [str(self.python_executable), "-m", self.MODULE, *list(arguments)]

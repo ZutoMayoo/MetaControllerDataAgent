@@ -55,6 +55,12 @@ class AdapterProbeTests(unittest.TestCase):
         self.assertTrue(probe["available"])
         self.assertFalse(probe["import_check"]["attempted"])
         self.assertIn("bird_benchmark.run_bird", probe["interface"])
+        self.assertEqual(probe["gold_isolation"]["status"], "BLOCKED")
+        codes = {finding["code"] for finding in probe["gold_isolation"]["findings"]}
+        self.assertEqual(
+            codes,
+            {"GOLD_FILE_BEFORE_INFERENCE", "FULL_QUESTION_BEFORE_INFERENCE", "FULL_QUESTION_COPIED_TO_WORKER"},
+        )
         isolated = WORKSPACE / "external" / "DataAgent" / "runtime" / "dataagent" / ".venv-dataloom-bird"
         if isolated.is_dir():
             self.assertTrue(probe["isolated_environment"])

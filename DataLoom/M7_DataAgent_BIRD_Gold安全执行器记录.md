@@ -1,6 +1,6 @@
 # M7 External DataAgent BIRD Gold 安全执行器记录
 
-日期：2026-09-24  
+日期：2026-09-24
 External DataAgent revision：`8208e7cbbc0c3351c76a4c292737ca05ab92cb4f`
 
 ## 结论

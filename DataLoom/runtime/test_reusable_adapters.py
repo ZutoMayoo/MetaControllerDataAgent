@@ -61,6 +61,11 @@ class AdapterProbeTests(unittest.TestCase):
             codes,
             {"GOLD_FILE_BEFORE_INFERENCE", "FULL_QUESTION_BEFORE_INFERENCE", "FULL_QUESTION_COPIED_TO_WORKER"},
         )
+        remediation = probe["gold_isolation"]["dataloom_remediation"]
+        self.assertEqual(remediation["status"], "READY_FOR_CANARY")
+        self.assertTrue(remediation["sanitized_bundle"])
+        self.assertTrue(remediation["isolated_container"])
+        self.assertFalse(remediation["live_canary_completed"])
         isolated = WORKSPACE / "external" / "DataAgent" / "runtime" / "dataagent" / ".venv-dataloom-bird"
         if isolated.is_dir():
             self.assertTrue(probe["isolated_environment"])

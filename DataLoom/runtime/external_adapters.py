@@ -192,12 +192,26 @@ class DataAgentBirdAdapter:
                 "line": worker_source.count("\n", 0, worker_position) + 1,
                 "source": self.ENTRY.as_posix(),
             })
+        split_runner = Path(__file__).with_name("bird_gold_safe.py")
+        remediation = {
+            "status": "READY_FOR_CANARY" if split_runner.is_file() else "NOT_IMPLEMENTED",
+            "runner": str(split_runner),
+            "runner_sha256": _sha256(split_runner) if split_runner.is_file() else None,
+            "sanitized_bundle": split_runner.is_file(),
+            "isolated_container": split_runner.is_file(),
+            "frozen_candidate_digest": split_runner.is_file(),
+            "host_only_evaluation": split_runner.is_file(),
+            "live_canary_completed": False,
+        }
         return {
             "status": "BLOCKED" if findings else "PASS",
             "safe_for_live_inference": not findings,
             "findings": findings,
+            "dataloom_remediation": remediation,
             "required_remediation": (
-                "sanitized inference bundle in an isolated process/container, followed by host-only evaluation"
+                "complete one Gold-safe isolated canary before exposing live inference"
+                if remediation["status"] == "READY_FOR_CANARY"
+                else "sanitized inference bundle in an isolated process/container, followed by host-only evaluation"
                 if findings else None
             ),
         }

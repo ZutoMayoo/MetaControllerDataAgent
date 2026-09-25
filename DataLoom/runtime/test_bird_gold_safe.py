@@ -15,7 +15,13 @@ from pathlib import Path
 RUNTIME = Path(__file__).resolve().parent
 sys.path.insert(0, str(RUNTIME))
 
-from bird_gold_safe import GoldIsolationError, audit_bundle, evaluate_candidate, prepare_bundle
+from bird_gold_safe import (
+    GoldIsolationError,
+    _enforce_zero_few_shot_config,
+    audit_bundle,
+    evaluate_candidate,
+    prepare_bundle,
+)
 
 
 def _json(path: Path, value: object) -> None:
@@ -140,6 +146,17 @@ class BirdGoldSafeTests(unittest.TestCase):
             )
         with contextlib.closing(sqlite3.connect(self.database)) as connection:
             self.assertEqual(connection.execute("SELECT COUNT(*) FROM items").fetchone()[0], 2)
+
+    def test_inference_config_disables_sql_few_shot(self) -> None:
+        config_path = self.root / "agent.yaml"
+        config_path.write_text("CORE:\n  generator:\n    icl_top_k: 3\n", encoding="utf-8")
+        _enforce_zero_few_shot_config(config_path)
+        self.assertIn("icl_top_k: 0", config_path.read_text(encoding="utf-8"))
+
+    def test_isolated_runner_sets_provider_api_key(self) -> None:
+        runner = RUNTIME.parent / "scripts" / "run_dataagent_bird_isolated.ps1"
+        source = runner.read_text(encoding="utf-8")
+        self.assertIn("-e DEEPSEEK_API_KEY=local-qwen", source)
 
 
 if __name__ == "__main__":

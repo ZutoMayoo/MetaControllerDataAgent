@@ -37,6 +37,7 @@ $containerName = "dataloom-bird-infer-" + [guid]::NewGuid().ToString("N").Substr
     --tmpfs "/tmp:rw,noexec,nosuid,size=512m" `
     -e DATAAGENT_HOME=/output/dataagent_home `
     -e LLM_API_KEY=local-qwen `
+    -e DEEPSEEK_API_KEY=local-qwen `
     $Image `
     --bundle-dir /input `
     --output-dir /output/inference `

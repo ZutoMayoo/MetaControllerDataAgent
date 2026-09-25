@@ -55,6 +55,26 @@ def _new_directory(path: Path) -> Path:
     return resolved
 
 
+def _enforce_zero_few_shot_config(config_path: Path) -> None:
+    """Disable SQL ICL both declaratively and before agent construction."""
+    import yaml
+
+    config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    if not isinstance(config, dict):
+        raise GoldIsolationError("generated agent config must be a mapping")
+    core = config.setdefault("CORE", {})
+    if not isinstance(core, dict):
+        raise GoldIsolationError("generated CORE config must be a mapping")
+    generator = core.setdefault("generator", {})
+    if not isinstance(generator, dict):
+        raise GoldIsolationError("generated generator config must be a mapping")
+    generator["icl_top_k"] = 0
+    config_path.write_text(
+        yaml.safe_dump(config, allow_unicode=True, sort_keys=False),
+        encoding="utf-8",
+    )
+
+
 def _load_questions(path: Path) -> list[dict[str, Any]]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, list) or not all(isinstance(item, dict) for item in value):
@@ -196,6 +216,7 @@ async def run_inference(
         generator_max_tokens=None,
         llm_max_concurrency=1,
     )
+    _enforce_zero_few_shot_config(config_path)
     started = time.perf_counter()
     agent = DataAgent.from_config(str(config_path))
     response = await _chat_with_deadline(
@@ -209,6 +230,8 @@ async def run_inference(
                 "run_id": 0,
                 "sub_id": 0,
                 "evidence": str(task.get("evidence") or ""),
+                "few_shot_examples": "",
+                "few_shot_lookup_complete": True,
             },
         ),
         case_timeout,
@@ -222,7 +245,11 @@ async def run_inference(
         "bundle_sha256": audit["manifest"]["artifact_sha256"],
         "elapsed_seconds": time.perf_counter() - started,
         "llm_total_tokens": final_state.get("llm_total_tokens", 0),
-        "producer": {"component": "External DataAgent", "model": model},
+        "producer": {
+            "component": "External DataAgent",
+            "model": model,
+            "sql_few_shot_used": False,
+        },
     }
     candidate_path = output / "candidate.json"
     _write_json(candidate_path, candidate)

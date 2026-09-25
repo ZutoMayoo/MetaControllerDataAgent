@@ -109,11 +109,30 @@ class SemanticApi:
             raise RuntimeError(f"semantic API {method} {path} failed: {exc.reason}") from exc
 
     def entities(self, type_name: str) -> list[dict[str, Any]]:
-        payload = self._json("POST", "search/basic", {"typeName": type_name, "limit": 1000, "offset": 0})
-        entities = payload.get("entities") if isinstance(payload, dict) else None
-        if not isinstance(entities, list):
-            raise RuntimeError(f"unexpected search response for {type_name}")
-        return entities
+        page_size = 1000
+        offset = 0
+        result: list[dict[str, Any]] = []
+        seen_guids: set[str] = set()
+        while True:
+            payload = self._json(
+                "POST",
+                "search/basic",
+                {"typeName": type_name, "limit": page_size, "offset": offset},
+            )
+            entities = payload.get("entities") if isinstance(payload, dict) else None
+            if not isinstance(entities, list):
+                raise RuntimeError(f"unexpected search response for {type_name}")
+            if not entities:
+                break
+            page_guids = {str(entity.get("guid")) for entity in entities}
+            if len(page_guids) != len(entities) or page_guids & seen_guids:
+                raise RuntimeError(f"semantic API returned a duplicate page for {type_name}")
+            seen_guids.update(page_guids)
+            result.extend(entities)
+            if len(entities) < page_size:
+                break
+            offset += len(entities)
+        return result
 
     def update(self, type_name: str, guid: str, payload: dict[str, Any]) -> None:
         self._json("PUT", f"entity/{type_name}/guid/{guid}", payload)

@@ -65,7 +65,18 @@
     {
       "id": "M3",
       "name": "Spider 2.0-DBT 迁移",
-      "status": "NOT_STARTED",
+      "status": "DESIGN_FROZEN_READY_FOR_EVIDENCE_ADAPTER",
+      "record": "M12_Spider2_DBT_实验边界与Pilot冻结记录.md",
+      "pilot_tasks": ["playbook001", "provider001", "asset001"],
+      "operational_design": {
+        "factors": ["structured_project_evidence", "dbt_skills"],
+        "S0": "neither factor",
+        "S1": "structured_project_evidence only",
+        "S2": "structured_project_evidence plus dbt_skills",
+        "S3": "dbt_skills only",
+        "shared_model": "qwen3.8-27b",
+        "gold_access": "host_only_after_candidate_freeze"
+      },
       "depends_on": ["M2"]
     },
     {

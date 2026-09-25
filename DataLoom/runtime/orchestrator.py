@@ -23,6 +23,15 @@ TRUSTED_PROJECT_SKILLS = frozenset({
 })
 
 
+def _configure_stdout_utf8(stream: Any | None = None) -> Any:
+    """Keep JSON CLI output stable on Windows hosts whose default is GBK."""
+    target = stream or sys.stdout
+    reconfigure = getattr(target, "reconfigure", None)
+    if callable(reconfigure):
+        reconfigure(encoding="utf-8")
+    return target
+
+
 def _need(*names: str):
     def guard(payload: Mapping[str, Any]) -> None:
         missing = [name for name in names if payload.get(name) in (None, "")]
@@ -122,6 +131,7 @@ class DataLoomOrchestrator:
 
 
 def main() -> int:
+    _configure_stdout_utf8()
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("catalog")

@@ -14,7 +14,7 @@ WORKSPACE = RUNTIME.parents[2]
 from benchmark_router import BenchmarkRouter, RoutingError
 from context_projection import ProjectionPolicy, project_search_matches
 from external_adapters import DataAgentBirdAdapter, SignalPilotDbtAdapter
-from orchestrator import DataLoomOrchestrator
+from orchestrator import DataLoomOrchestrator, _configure_stdout_utf8
 from run_project_understanding_qwen import ReadOnlyRepository
 
 
@@ -72,6 +72,17 @@ class AdapterProbeTests(unittest.TestCase):
 
 
 class RouterTests(unittest.TestCase):
+    def test_orchestrator_configures_utf8_cli_output(self) -> None:
+        class Stream:
+            encoding = "gbk"
+
+            def reconfigure(self, **kwargs):
+                self.encoding = kwargs["encoding"]
+
+        stream = Stream()
+        self.assertIs(_configure_stdout_utf8(stream), stream)
+        self.assertEqual(stream.encoding, "utf-8")
+
     def test_routes_all_target_benchmarks(self) -> None:
         router = BenchmarkRouter()
         self.assertEqual(router.select("CodeAware").adapter, "dataloom-native-qwen")

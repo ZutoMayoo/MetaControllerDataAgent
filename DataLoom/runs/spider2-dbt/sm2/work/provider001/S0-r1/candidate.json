@@ -1,0 +1,8 @@
+{
+  "run_id": "spider-pilot-provider001-s0",
+  "task_id": "provider001",
+  "condition": "S0",
+  "manifest_sha256": "5f37e58056cee8020be9ba261861f4397704b81c6485973df20cf027e54a7024",
+  "changed_files": [],
+  "removed_files": []
+}

@@ -1,0 +1,8 @@
+{
+  "task_id": "asset001",
+  "condition": "S2",
+  "passed": false,
+  "detail": "  bar_quotes: FAIL — table not in result DB (have: ['market_trades', 'quotes', 'sentiment', 'trades'])\n  book_value: FAIL — table not in result DB (have: ['market_trades', 'quotes', 'sentiment', 'trades'])",
+  "candidate_sha256": "9df88ae6eddc914944c7befa072de8c5ebf0867cde47fe15643a1fb7e18a85b8",
+  "evaluation_boundary": "host-only-after-frozen-candidate"
+}

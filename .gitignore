@@ -19,3 +19,16 @@ Thumbs.db
 # Local temporary files
 *.tmp
 *.log
+
+# Spider2-DBT S-M2 keeps lightweight audit/candidate records in Git, not DB copies
+DataLoom/runs/spider2-dbt/sm2/work/**/*.duckdb
+DataLoom/runs/spider2-dbt/sm2/work/**/target/
+DataLoom/runs/spider2-dbt/sm2/work/**/logs/
+DataLoom/runs/spider2-dbt/sm2/work/**/*.sql
+DataLoom/runs/spider2-dbt/sm2/work/**/*.yml
+!DataLoom/runs/spider2-dbt/sm2/work/playbook001/S0-r3/models/cpa_and_roas.sql
+!DataLoom/runs/spider2-dbt/sm2/work/playbook001/S2-r1/models/cpa_and_roas.sql
+DataLoom/runs/spider2-dbt/sm2/work/playbook001/S0/
+DataLoom/runs/spider2-dbt/sm2/work/playbook001/S0-r1/
+DataLoom/runs/spider2-dbt/sm2/work/playbook001/S0-r2/
+DataLoom/runs/spider2-dbt/sm2/evaluations/playbook001/S0.json

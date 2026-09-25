@@ -1,0 +1,9 @@
+{
+  "task_id": "playbook001",
+  "condition": "S0",
+  "work_dir": "runs/spider2-dbt/sm2/work/playbook001/S0-r1",
+  "status": "INVALIDATED",
+  "reason": "The raw public DuckDB still contained the official evaluation target relation attribution_touches before inference.",
+  "score_must_not_be_used": true,
+  "replacement": "S0-r2 prepared by runtime/prepare_spider_pilot.py"
+}

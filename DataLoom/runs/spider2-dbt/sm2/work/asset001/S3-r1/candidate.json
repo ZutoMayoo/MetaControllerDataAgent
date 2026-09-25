@@ -1,0 +1,8 @@
+{
+  "run_id": "spider-pilot-asset001-s3",
+  "task_id": "asset001",
+  "condition": "S3",
+  "manifest_sha256": "8106dd6b306a72a9f02bf7ff06a43c9d720b7ac69ea349d4ba784dea2af0fdf3",
+  "changed_files": [],
+  "removed_files": []
+}

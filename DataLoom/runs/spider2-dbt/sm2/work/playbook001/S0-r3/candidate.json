@@ -1,0 +1,14 @@
+{
+  "run_id": "spider-pilot-playbook001-s0",
+  "task_id": "playbook001",
+  "condition": "S0",
+  "manifest_sha256": "63d73f7bef412c1181c500d7be58e60fdf196ba751c158a45b6c4342a0795b51",
+  "changed_files": [
+    {
+      "path": "models/cpa_and_roas.sql",
+      "sha256": "463cb7976a20b73fd52dcfb0a44f9f9ff63572cc920f84396d652646bff325f2",
+      "change": "created"
+    }
+  ],
+  "removed_files": []
+}

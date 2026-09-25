@@ -1,0 +1,8 @@
+{
+  "task_id": "playbook001",
+  "condition": "S0",
+  "passed": true,
+  "detail": "  attribution_touches: PASS",
+  "candidate_sha256": "73365e2524eba643736000b720feeef0dfca173e3295e1e9fd5cdc44703ef81d",
+  "evaluation_boundary": "host-only-after-frozen-candidate"
+}

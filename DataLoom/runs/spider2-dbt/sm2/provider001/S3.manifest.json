@@ -1,0 +1,54 @@
+{
+  "schema_version": "spider-condition-0.1",
+  "run_id": "spider-pilot-provider001-s3",
+  "task_id": "provider001",
+  "instruction": "How can I map Medicare specialties to NUCC taxonomy codes, prioritize the most specific one, and assign a primary taxonomy code to each provider in the NPI dataset? Additionally, how can I combine this with provider details, including their entity type, practice location, and specialty, while checking if their NPI is active or deactivated?",
+  "public_input_sha256": "762245e6c4d7a58655b608555c7efa645dd813346b72a680544eaefd506b3472",
+  "condition": "S3",
+  "factors": {
+    "structured_project_evidence": false,
+    "dbt_skills": true
+  },
+  "model": "qwen3.8-27b",
+  "project_digest": "9d3e19e9da2732094d74a0d70578c5d24c09097ba85f22382b39161d156e6de3",
+  "evidence": null,
+  "skills": [
+    {
+      "name": "dbt-workflow",
+      "path": "/experiment/skills/dbt-workflow/SKILL.md",
+      "sha256": "53c21dfccc94ed46b5eccf695efd5061ec53a428167f2989778f449d357cd923"
+    },
+    {
+      "name": "dbt-write",
+      "path": "/experiment/skills/dbt-write/SKILL.md",
+      "sha256": "84bce2ccca480a1bb3510d9fbc6b48d61f04d7907bca870a7c2afe26f119e595"
+    },
+    {
+      "name": "duckdb-sql",
+      "path": "/experiment/skills/duckdb-sql/SKILL.md",
+      "sha256": "c9f03157518dc5d0ae0ed4e15def0ffcd10011c641f98b30a0673085291faedd"
+    }
+  ],
+  "tool_policy": {
+    "allowed": [
+      "Read",
+      "Bash",
+      "Write",
+      "Edit"
+    ],
+    "disallowed": [
+      "Skill",
+      "Agent",
+      "Task",
+      "WebFetch",
+      "WebSearch",
+      "AskUserQuestion"
+    ]
+  },
+  "budget": {
+    "max_turns": 80,
+    "timeout_seconds": 1800
+  },
+  "evaluation_feedback_available_during_inference": false,
+  "manifest_sha256": "e1aff056b341ddcbbc3a93f127c810147cf0de37d2261292ce3b7a658a97fb65"
+}

@@ -1,0 +1,8 @@
+{
+  "task_id": "playbook001",
+  "condition": "S1",
+  "passed": false,
+  "detail": "  attribution_touches: FAIL — table not in result DB (have: ['ad_spend', 'customer_conversions', 'sessions'])",
+  "candidate_sha256": "1d05832d4fdb4b442c5e0167c06673a683d7e4a2a128b6db327d3468752e3d4f",
+  "evaluation_boundary": "host-only-after-frozen-candidate"
+}

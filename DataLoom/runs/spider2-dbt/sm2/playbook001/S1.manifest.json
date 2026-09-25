@@ -1,0 +1,41 @@
+{
+  "schema_version": "spider-condition-0.1",
+  "run_id": "spider-pilot-playbook001-s1",
+  "task_id": "playbook001",
+  "instruction": "Complete the project of this database to show the metrics of each traffic source, I believe every touchpoint in the conversion path is equally important, please choose the most suitable attribution method.",
+  "public_input_sha256": "9dbfb41f815be2b3ba021942eefbf3b3fae4452a73a6096af5d3f6ad01294e2f",
+  "condition": "S1",
+  "factors": {
+    "structured_project_evidence": true,
+    "dbt_skills": false
+  },
+  "model": "qwen3.8-27b",
+  "project_digest": "0d9aeb57a493259a84d52ba1229fc69b98a59ba1343c1a2fc73ec8cc7b115ec2",
+  "evidence": {
+    "path": "/experiment/evidence.json",
+    "sha256": "9910b769e6cf869a715e2cbba4b489b2dc72c163a72ffc56c1fa358a41a7bae5"
+  },
+  "skills": [],
+  "tool_policy": {
+    "allowed": [
+      "Read",
+      "Bash",
+      "Write",
+      "Edit"
+    ],
+    "disallowed": [
+      "Skill",
+      "Agent",
+      "Task",
+      "WebFetch",
+      "WebSearch",
+      "AskUserQuestion"
+    ]
+  },
+  "budget": {
+    "max_turns": 80,
+    "timeout_seconds": 1800
+  },
+  "evaluation_feedback_available_during_inference": false,
+  "manifest_sha256": "7b6672bd0905e5d26a1a38e72b80cf40f8ecad90e575cb01b922a9f57c4a685a"
+}

@@ -1,0 +1,8 @@
+{
+  "task_id": "provider001",
+  "condition": "S0",
+  "passed": false,
+  "detail": "  specialty_mapping: FAIL — table not in result DB (have: ['medicare_specialty_crosswalk', 'npi', 'nucc_taxonomy'])\n  provider: FAIL — table not in result DB (have: ['medicare_specialty_crosswalk', 'npi', 'nucc_taxonomy'])",
+  "candidate_sha256": "305a6617bceb3103348c22acbb110f99adc4a4fa82523315c88f86cbb7185b63",
+  "evaluation_boundary": "host-only-after-frozen-candidate"
+}

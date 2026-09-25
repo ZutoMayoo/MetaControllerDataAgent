@@ -1,0 +1,16 @@
+{
+  "task_id": "playbook001",
+  "source": "D:\\GraduationProject\\ProgressReport\\P1\\Spider-Agent-TC\\Spider2\\spider2-dbt\\examples\\playbook001",
+  "destination": "D:\\GraduationProject\\ProgressReport\\P12\\DataLoom\\runs\\spider2-dbt\\sm2\\work\\playbook001\\S3-r1",
+  "target_relations_removed": [
+    "attribution_touches"
+  ],
+  "target_relations_absent": [],
+  "remaining_tables": [
+    "ad_spend",
+    "customer_conversions",
+    "sessions"
+  ],
+  "database_sha256": "1262d2d77613a7db1599b29271db3cc48da9b4e527418a1ab5c81fa07a3b3cd7",
+  "agent_visible": false
+}

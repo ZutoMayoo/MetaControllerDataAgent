@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "project": "DataLoom",
-  "status": "M0_COMPLETE",
+  "status": "M3_SPIDER_PILOT_COMPLETE",
   "standard_inference_policy": {
     "gold_access": "forbidden",
     "official_evaluation_feedback_during_inference": false,
@@ -65,8 +65,9 @@
     {
       "id": "M3",
       "name": "Spider 2.0-DBT 迁移",
-      "status": "EVIDENCE_ADAPTER_COMPLETE_READY_FOR_CONDITION_ISOLATION",
+      "status": "PILOT_COMPLETE_CONTROLLER_REGRESSION_REQUIRED",
       "record": "M13_Spider2_DBT_统一证据适配器记录.md",
+      "pilot_record": "M14_Spider2_DBT_条件隔离与Pilot结果.md",
       "design_record": "M12_Spider2_DBT_实验边界与Pilot冻结记录.md",
       "evidence_schema": "dbt-0.1",
       "evidence_runs": "runs/spider2-dbt/sm1",
@@ -79,6 +80,19 @@
         "S3": "dbt_skills only",
         "shared_model": "qwen3.8-27b",
         "gold_access": "host_only_after_candidate_freeze"
+      },
+      "pilot_result": {
+        "formal_runs": 12,
+        "passed": 2,
+        "failed": 10,
+        "by_condition": {
+          "S0": "1/3 PASS",
+          "S1": "0/3 PASS",
+          "S2": "1/3 PASS",
+          "S3": "0/3 PASS"
+        },
+        "primary_failure": "database exploration loops before any candidate file write",
+        "next_gate": "semantic loop detection and mandatory implementation checkpoints before sample expansion"
       },
       "depends_on": ["M2"]
     },

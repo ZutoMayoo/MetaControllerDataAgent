@@ -1,0 +1,3 @@
+# Preserve byte-stable frozen Spider2-DBT candidate artifacts across platforms.
+DataLoom/runs/spider2-dbt/sm2/work/**/candidate.json text eol=lf
+DataLoom/runs/spider2-dbt/sm2/work/**/candidate.sha256 text eol=lf

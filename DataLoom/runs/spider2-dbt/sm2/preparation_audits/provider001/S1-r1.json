@@ -1,0 +1,17 @@
+{
+  "task_id": "provider001",
+  "source": "D:\\GraduationProject\\ProgressReport\\P1\\Spider-Agent-TC\\Spider2\\spider2-dbt\\examples\\provider001",
+  "destination": "D:\\GraduationProject\\ProgressReport\\P12\\DataLoom\\runs\\spider2-dbt\\sm2\\work\\provider001\\S1-r1",
+  "target_relations_removed": [],
+  "target_relations_absent": [
+    "provider",
+    "specialty_mapping"
+  ],
+  "remaining_tables": [
+    "medicare_specialty_crosswalk",
+    "npi",
+    "nucc_taxonomy"
+  ],
+  "database_sha256": "cab090f5a273ff463507579461fcb2cdcdf41ef125532ddc3159c58ea75be27f",
+  "agent_visible": false
+}

@@ -1,0 +1,41 @@
+{
+  "schema_version": "spider-condition-0.1",
+  "run_id": "spider-pilot-provider001-s1",
+  "task_id": "provider001",
+  "instruction": "How can I map Medicare specialties to NUCC taxonomy codes, prioritize the most specific one, and assign a primary taxonomy code to each provider in the NPI dataset? Additionally, how can I combine this with provider details, including their entity type, practice location, and specialty, while checking if their NPI is active or deactivated?",
+  "public_input_sha256": "762245e6c4d7a58655b608555c7efa645dd813346b72a680544eaefd506b3472",
+  "condition": "S1",
+  "factors": {
+    "structured_project_evidence": true,
+    "dbt_skills": false
+  },
+  "model": "qwen3.8-27b",
+  "project_digest": "9d3e19e9da2732094d74a0d70578c5d24c09097ba85f22382b39161d156e6de3",
+  "evidence": {
+    "path": "/experiment/evidence.json",
+    "sha256": "a4898bb516ba84c2d039053abf636f74fd909b810bb03beabaababca1a1496fc"
+  },
+  "skills": [],
+  "tool_policy": {
+    "allowed": [
+      "Read",
+      "Bash",
+      "Write",
+      "Edit"
+    ],
+    "disallowed": [
+      "Skill",
+      "Agent",
+      "Task",
+      "WebFetch",
+      "WebSearch",
+      "AskUserQuestion"
+    ]
+  },
+  "budget": {
+    "max_turns": 80,
+    "timeout_seconds": 1800
+  },
+  "evaluation_feedback_available_during_inference": false,
+  "manifest_sha256": "7d962d27144673ed2ffb8ae4cafef69192c75ab2741ef84f4d1af5d26acbdaf5"
+}

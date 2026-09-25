@@ -1,0 +1,8 @@
+{
+  "run_id": "spider-pilot-provider001-s2",
+  "task_id": "provider001",
+  "condition": "S2",
+  "manifest_sha256": "5334c1a7338f8d6f00bdcd575f3953866c08c2e03ddebddd161bbb187609733a",
+  "changed_files": [],
+  "removed_files": []
+}

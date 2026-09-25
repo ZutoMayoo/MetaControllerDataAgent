@@ -1,0 +1,8 @@
+{
+  "run_id": "spider-pilot-provider001-s3",
+  "task_id": "provider001",
+  "condition": "S3",
+  "manifest_sha256": "e1aff056b341ddcbbc3a93f127c810147cf0de37d2261292ce3b7a658a97fb65",
+  "changed_files": [],
+  "removed_files": []
+}

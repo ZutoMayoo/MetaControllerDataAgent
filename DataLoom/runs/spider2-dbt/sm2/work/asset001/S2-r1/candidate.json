@@ -1,0 +1,8 @@
+{
+  "run_id": "spider-pilot-asset001-s2",
+  "task_id": "asset001",
+  "condition": "S2",
+  "manifest_sha256": "657f963cbe1e07e5cec25430bb850805bb6d547f91c0a04ad67fff80da1f3033",
+  "changed_files": [],
+  "removed_files": []
+}

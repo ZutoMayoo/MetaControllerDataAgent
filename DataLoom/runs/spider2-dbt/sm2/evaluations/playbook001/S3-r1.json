@@ -1,0 +1,8 @@
+{
+  "task_id": "playbook001",
+  "condition": "S3",
+  "passed": false,
+  "detail": "  attribution_touches: FAIL — table not in result DB (have: ['ad_spend', 'customer_conversions', 'sessions'])",
+  "candidate_sha256": "cb999db5f573c92234626e5c3bb73c34463c43315cd332f598579b93d6303d06",
+  "evaluation_boundary": "host-only-after-frozen-candidate"
+}

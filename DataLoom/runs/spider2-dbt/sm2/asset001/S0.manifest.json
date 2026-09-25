@@ -1,0 +1,38 @@
+{
+  "schema_version": "spider-condition-0.1",
+  "run_id": "spider-pilot-asset001-s0",
+  "task_id": "asset001",
+  "instruction": "Calculate the average bid, ask, and mid prices for stock tickers on a daily basis and then determine the total book value of shares based on these prices",
+  "public_input_sha256": "75ce9bafb2076aee36e69bf0ed2f2c2e9cfc521b33ff48d371b195de81760774",
+  "condition": "S0",
+  "factors": {
+    "structured_project_evidence": false,
+    "dbt_skills": false
+  },
+  "model": "qwen3.8-27b",
+  "project_digest": "773a0bcf0f6efe797a73b8d606da8319bf5c07cb2ba3b3dc9748da48246d67a4",
+  "evidence": null,
+  "skills": [],
+  "tool_policy": {
+    "allowed": [
+      "Read",
+      "Bash",
+      "Write",
+      "Edit"
+    ],
+    "disallowed": [
+      "Skill",
+      "Agent",
+      "Task",
+      "WebFetch",
+      "WebSearch",
+      "AskUserQuestion"
+    ]
+  },
+  "budget": {
+    "max_turns": 80,
+    "timeout_seconds": 1800
+  },
+  "evaluation_feedback_available_during_inference": false,
+  "manifest_sha256": "d81c7067c022abbe984b25eb0f37b064337a7b5648af58bd807fb3ad32f2285b"
+}

@@ -1,0 +1,18 @@
+{
+  "task_id": "asset001",
+  "source": "D:\\GraduationProject\\ProgressReport\\P1\\Spider-Agent-TC\\Spider2\\spider2-dbt\\examples\\asset001",
+  "destination": "D:\\GraduationProject\\ProgressReport\\P12\\DataLoom\\runs\\spider2-dbt\\sm2\\work\\asset001\\S1-r1",
+  "target_relations_removed": [],
+  "target_relations_absent": [
+    "bar_quotes",
+    "book_value"
+  ],
+  "remaining_tables": [
+    "market_trades",
+    "quotes",
+    "sentiment",
+    "trades"
+  ],
+  "database_sha256": "f728a00b03236dd21863d5845edcd397666600cc8da086edd19f8bf44b239687",
+  "agent_visible": false
+}

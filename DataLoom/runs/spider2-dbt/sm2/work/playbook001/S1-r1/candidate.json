@@ -1,0 +1,8 @@
+{
+  "run_id": "spider-pilot-playbook001-s1",
+  "task_id": "playbook001",
+  "condition": "S1",
+  "manifest_sha256": "7b6672bd0905e5d26a1a38e72b80cf40f8ecad90e575cb01b922a9f57c4a685a",
+  "changed_files": [],
+  "removed_files": []
+}

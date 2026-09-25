@@ -1,0 +1,214 @@
+{
+  "schema_version": "dbt-0.1",
+  "task_id": "provider001",
+  "instruction": "How can I map Medicare specialties to NUCC taxonomy codes, prioritize the most specific one, and assign a primary taxonomy code to each provider in the NPI dataset? Additionally, how can I combine this with provider details, including their entity type, practice location, and specialty, while checking if their NPI is active or deactivated?",
+  "public_input_sha256": "762245e6c4d7a58655b608555c7efa645dd813346b72a680544eaefd506b3472",
+  "project_digest": "9d3e19e9da2732094d74a0d70578c5d24c09097ba85f22382b39161d156e6de3",
+  "models": {
+    "missing": [
+      {
+        "name": "other_provider_taxonomy",
+        "materialized": "table",
+        "required_columns": [
+          "npi",
+          "taxonomy_code",
+          "medicare_specialty_code",
+          "description",
+          "primary_flag"
+        ],
+        "description": ">",
+        "source_refs": [
+          {
+            "path": "models/_models.yml",
+            "sha256": "fc74874662dc720c3397699ebcd34e5b5b1a3407217257abb460cd8b574608a4",
+            "line_start": 106,
+            "line_end": 132
+          }
+        ]
+      },
+      {
+        "name": "specialty_mapping",
+        "materialized": "table",
+        "required_columns": [
+          "taxonomy_code",
+          "medicare_specialty_code",
+          "description"
+        ],
+        "description": ">",
+        "source_refs": [
+          {
+            "path": "models/_models.yml",
+            "sha256": "fc74874662dc720c3397699ebcd34e5b5b1a3407217257abb460cd8b574608a4",
+            "line_start": 5,
+            "line_end": 26
+          }
+        ]
+      }
+    ],
+    "stubs": [],
+    "complete": [
+      {
+        "name": "provider",
+        "materialized": "table",
+        "required_columns": [
+          "npi",
+          "entity_type_code",
+          "entity_type_description",
+          "primary_taxonomy_code",
+          "primary_specialty_description",
+          "provider_first_name",
+          "provider_last_name",
+          "provider_organization_name",
+          "parent_organization_name",
+          "practice_address_line_1",
+          "practice_address_line_2",
+          "practice_city",
+          "practice_state",
+          "practice_zip_code",
+          "last_updated",
+          "deactivation_date",
+          "deactivation_flag"
+        ],
+        "description": ">",
+        "source_refs": [
+          {
+            "path": "models/_models.yml",
+            "sha256": "fc74874662dc720c3397699ebcd34e5b5b1a3407217257abb460cd8b574608a4",
+            "line_start": 37,
+            "line_end": 105
+          },
+          {
+            "path": "models/provider.sql",
+            "sha256": "6e3ec03850ae9a7623fc90c38228275e5cdfa8f90010089cbb5cbeee8e00197c",
+            "line_start": 1,
+            "line_end": 58
+          }
+        ]
+      },
+      {
+        "name": "taxonomy_unpivot",
+        "materialized": "table",
+        "required_columns": [
+          "npi",
+          "taxonomy_col",
+          "taxonomy_code",
+          "switch",
+          "taxonomy_switch"
+        ],
+        "description": "Unpivot provider taxonomies from NPPES data",
+        "source_refs": [
+          {
+            "path": "models/_models.yml",
+            "sha256": "fc74874662dc720c3397699ebcd34e5b5b1a3407217257abb460cd8b574608a4",
+            "line_start": 27,
+            "line_end": 36
+          },
+          {
+            "path": "models/intermediate/taxonomy_unpivot.sql",
+            "sha256": "84ef9552265a58a555a785a0be598e4504cfe8af9d37c378a38dd9fdcc5ad37a",
+            "line_start": 1,
+            "line_end": 88
+          }
+        ]
+      }
+    ],
+    "orphans": []
+  },
+  "dependencies": [
+    {
+      "model": "provider",
+      "depends_on": [
+        "other_provider_taxonomy"
+      ],
+      "source_refs": [
+        {
+          "path": "models/provider.sql",
+          "sha256": "6e3ec03850ae9a7623fc90c38228275e5cdfa8f90010089cbb5cbeee8e00197c",
+          "line_start": 27,
+          "line_end": 27
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "declaration": "source('nppes', '<table>') — tables: npi, nucc_taxonomy, medicare_specialty_crosswalk",
+      "source_refs": [
+        {
+          "path": "dbt_project.yml",
+          "sha256": "c919863fc43fd921ba70564d9cd01a4be0b7ff7d80beb14b317bbe884734e605",
+          "line_start": 1,
+          "line_end": 21
+        },
+        {
+          "path": "models/_models.yml",
+          "sha256": "fc74874662dc720c3397699ebcd34e5b5b1a3407217257abb460cd8b574608a4",
+          "line_start": 28,
+          "line_end": 113
+        },
+        {
+          "path": "models/_sources.yml",
+          "sha256": "970cae14d9a52d6d5826f927d5e52fd9c256928411e55256289782377cf31a10",
+          "line_start": 4,
+          "line_end": 10
+        }
+      ]
+    }
+  ],
+  "macros": [
+    {
+      "name": "default__generate_schema_name",
+      "source_refs": [
+        {
+          "path": "macros/generate_schema_name.sql",
+          "sha256": "c23ee6cc9397141a46016772901fedc5845311883b65c4d03aceac071a77beee",
+          "line_start": 6,
+          "line_end": 6
+        }
+      ]
+    }
+  ],
+  "date_hazards": [],
+  "project_files": [
+    {
+      "path": "dbt_project.yml",
+      "sha256": "c919863fc43fd921ba70564d9cd01a4be0b7ff7d80beb14b317bbe884734e605"
+    },
+    {
+      "path": "macros/generate_schema_name.sql",
+      "sha256": "c23ee6cc9397141a46016772901fedc5845311883b65c4d03aceac071a77beee"
+    },
+    {
+      "path": "models/_models.yml",
+      "sha256": "fc74874662dc720c3397699ebcd34e5b5b1a3407217257abb460cd8b574608a4"
+    },
+    {
+      "path": "models/_sources.yml",
+      "sha256": "970cae14d9a52d6d5826f927d5e52fd9c256928411e55256289782377cf31a10"
+    },
+    {
+      "path": "models/intermediate/taxonomy_unpivot.sql",
+      "sha256": "84ef9552265a58a555a785a0be598e4504cfe8af9d37c378a38dd9fdcc5ad37a"
+    },
+    {
+      "path": "models/provider.sql",
+      "sha256": "6e3ec03850ae9a7623fc90c38228275e5cdfa8f90010089cbb5cbeee8e00197c"
+    },
+    {
+      "path": "profiles.yml",
+      "sha256": "215bdc64c29885380ac0b523c8cf33e73d003442cb6adbed45afcda37448455a"
+    },
+    {
+      "path": "provider.duckdb",
+      "sha256": "cab090f5a273ff463507579461fcb2cdcdf41ef125532ddc3159c58ea75be27f"
+    }
+  ],
+  "producer": {
+    "role": "dbt-project-understanding",
+    "adapter": "signalpilot-dbt-evidence",
+    "component": "SignalPilot",
+    "revision": "71dc57e4d915ebc2475d4cd27c6d5f8c405e5cf3",
+    "scan_project_sha256": "afd2657fbfd471cb652526a167dafc7476a0a32814381897970553ffa9a59ce4"
+  },
+  "artifact_sha256": "c6063ad2545b6dd475cff4877aaedf5a90d1558846e75aa1d92b9687435ecc56"
+}

@@ -76,6 +76,15 @@ class DataLoomOrchestrator:
                        guards=(_need("project"),)),
                 Action("spider2-dbt.validate", lambda payload: signalpilot.validate(Path(payload["project"])),
                        guards=(_need("project"),)),
+                Action(
+                    "spider2-dbt.evidence",
+                    lambda payload: signalpilot.evidence_package(
+                        task_id=str(payload["task_id"]),
+                        instruction=str(payload["instruction"]),
+                        project=Path(payload["project"]),
+                    ),
+                    guards=(_need("task_id", "instruction", "project"),),
+                ),
                 Action("spider2-dbt.probe", lambda payload: signalpilot.probe()),
             ),
             benchmarks=frozenset({"spider2-dbt"}), roles=frozenset({"project-understanding"}),
@@ -142,6 +151,11 @@ def main() -> int:
     scan.add_argument("--project", type=Path, required=True)
     validate = commands.add_parser("validate-dbt")
     validate.add_argument("--project", type=Path, required=True)
+    evidence = commands.add_parser("evidence-dbt")
+    evidence.add_argument("--task-id", required=True)
+    evidence.add_argument("--instruction", required=True)
+    evidence.add_argument("--project", type=Path, required=True)
+    evidence.add_argument("--output", type=Path)
     bird = commands.add_parser("dry-run-bird")
     bird.add_argument("--bird-data-dir", type=Path, required=True)
     bird.add_argument("--dev-json", type=Path, required=True)
@@ -159,6 +173,17 @@ def main() -> int:
     elif args.command in {"scan-dbt", "validate-dbt"}:
         action = "spider2-dbt.scan" if args.command == "scan-dbt" else "spider2-dbt.validate"
         value = orchestrator.actions.dispatch(action, {"project": str(args.project)}, scopes={"execute"})
+    elif args.command == "evidence-dbt":
+        value = orchestrator.actions.dispatch(
+            "spider2-dbt.evidence",
+            {"task_id": args.task_id, "instruction": args.instruction, "project": str(args.project)},
+            scopes={"execute"},
+        )
+        if args.output:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(
+                json.dumps(value["observation"], ensure_ascii=False, indent=2), encoding="utf-8"
+            )
     else:
         arguments = [
             "run", "--mode", "limited",

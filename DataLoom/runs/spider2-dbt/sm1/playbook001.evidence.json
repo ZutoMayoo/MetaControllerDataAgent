@@ -1,0 +1,113 @@
+{
+  "schema_version": "dbt-0.1",
+  "task_id": "playbook001",
+  "instruction": "Complete the project of this database to show the metrics of each traffic source, I believe every touchpoint in the conversion path is equally important, please choose the most suitable attribution method.",
+  "public_input_sha256": "9dbfb41f815be2b3ba021942eefbf3b3fae4452a73a6096af5d3f6ad01294e2f",
+  "project_digest": "0d9aeb57a493259a84d52ba1229fc69b98a59ba1343c1a2fc73ec8cc7b115ec2",
+  "models": {
+    "missing": [
+      {
+        "name": "cpa_and_roas",
+        "materialized": "table",
+        "required_columns": [
+          "date_month",
+          "utm_source",
+          "attribution_points",
+          "attribution_revenue",
+          "total_spend",
+          "cost_per_acquisition",
+          "return_on_advertising_spend"
+        ],
+        "description": "The return on advertising spend for the month, calculated as attributed revenue divided by total spend.",
+        "source_refs": [
+          {
+            "path": "models/cpa_and_roas.yml",
+            "sha256": "1de7ede19661050b6cbd5d23b6911abe6b530b7e9343edf2660e158e002520b2",
+            "line_start": 4,
+            "line_end": 42
+          }
+        ]
+      }
+    ],
+    "stubs": [],
+    "complete": [],
+    "orphans": [
+      {
+        "name": "attribution_touches",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/attribution_touches.sql",
+            "sha256": "1216d1856548decb70662d66858ca6987a0c8a82bd062f3cc12ceb5d771a6a84",
+            "line_start": 1,
+            "line_end": 54
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": [],
+  "sources": [
+    {
+      "declaration": "source('playbook', '<table>') — tables: sessions, customer_conversions, ad_spend",
+      "source_refs": [
+        {
+          "path": "dbt_project.yml",
+          "sha256": "8844361fb28f4b5f3a44194d2b0e95a45f6a4845965197a8da7be10b8ec9f133",
+          "line_start": 3,
+          "line_end": 26
+        },
+        {
+          "path": "models/schema.yml",
+          "sha256": "0d389d86775aacd9ae1c17b69d8cf6c253d865a6b7b22440b3e551dd13d8e115",
+          "line_start": 4,
+          "line_end": 10
+        },
+        {
+          "path": "profiles.yml",
+          "sha256": "aaa65ec1446eb98683d6db3e20851cef305bbe0a337116fae18353deae012bb0",
+          "line_start": 1,
+          "line_end": 6
+        }
+      ]
+    }
+  ],
+  "macros": [],
+  "date_hazards": [],
+  "project_files": [
+    {
+      "path": "dbt_project.yml",
+      "sha256": "8844361fb28f4b5f3a44194d2b0e95a45f6a4845965197a8da7be10b8ec9f133"
+    },
+    {
+      "path": "models/attribution_touches.sql",
+      "sha256": "1216d1856548decb70662d66858ca6987a0c8a82bd062f3cc12ceb5d771a6a84"
+    },
+    {
+      "path": "models/cpa_and_roas.yml",
+      "sha256": "1de7ede19661050b6cbd5d23b6911abe6b530b7e9343edf2660e158e002520b2"
+    },
+    {
+      "path": "models/schema.yml",
+      "sha256": "0d389d86775aacd9ae1c17b69d8cf6c253d865a6b7b22440b3e551dd13d8e115"
+    },
+    {
+      "path": "playbook.duckdb",
+      "sha256": "24c5cf4a4a46d499674df7fc9c11e2ddaf131b0bef5c4bc02a8505d9dde68d57"
+    },
+    {
+      "path": "profiles.yml",
+      "sha256": "aaa65ec1446eb98683d6db3e20851cef305bbe0a337116fae18353deae012bb0"
+    }
+  ],
+  "producer": {
+    "role": "dbt-project-understanding",
+    "adapter": "signalpilot-dbt-evidence",
+    "component": "SignalPilot",
+    "revision": "71dc57e4d915ebc2475d4cd27c6d5f8c405e5cf3",
+    "scan_project_sha256": "afd2657fbfd471cb652526a167dafc7476a0a32814381897970553ffa9a59ce4"
+  },
+  "artifact_sha256": "6b92f8b473b8f6b597bc58269c7dd2b3adaf1dbf22f411d82cbf2a47ad287afb"
+}

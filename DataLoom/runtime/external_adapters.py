@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping
 
 from context_projection import project_text
+from dbt_evidence import build_dbt_evidence_package
 
 
 class AdapterError(RuntimeError):
@@ -113,6 +114,18 @@ class SignalPilotDbtAdapter:
             "observation": project_text((result.stdout or "") + (result.stderr or "")),
             "component": self.probe(),
         }
+
+    def evidence_package(self, *, task_id: str, instruction: str, project: Path) -> dict[str, Any]:
+        manifest = self.probe()
+        scan_component = next(item for item in manifest["components"] if item["path"] == self.SCAN.as_posix())
+        return build_dbt_evidence_package(
+            task_id=task_id,
+            instruction=instruction,
+            project=project,
+            scanner_script=self.component.root / self.SCAN,
+            scanner_revision=manifest["revision"],
+            scanner_sha256=scan_component["sha256"],
+        )
 
 
 class DataAgentBirdAdapter:

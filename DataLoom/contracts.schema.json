@@ -126,6 +126,39 @@
       ],
       "additionalProperties": false
     },
+    "DbtEvidencePackage": {
+      "type": "object",
+      "description": "Deterministic Spider2.0-DBT project evidence; separate from code decision EvidencePackage 0.2.",
+      "required": [
+        "schema_version", "task_id", "instruction", "public_input_sha256", "project_digest",
+        "models", "dependencies", "sources", "macros", "date_hazards", "project_files",
+        "producer", "artifact_sha256"
+      ],
+      "properties": {
+        "schema_version": {"const": "dbt-0.1"},
+        "task_id": {"type": "string", "minLength": 1},
+        "instruction": {"type": "string", "minLength": 1},
+        "public_input_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "project_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "models": {
+          "type": "object",
+          "required": ["missing", "stubs", "complete", "orphans"],
+          "properties": {
+            "missing": {"type": "array"}, "stubs": {"type": "array"},
+            "complete": {"type": "array"}, "orphans": {"type": "array"}
+          },
+          "additionalProperties": false
+        },
+        "dependencies": {"type": "array"},
+        "sources": {"type": "array"},
+        "macros": {"type": "array"},
+        "date_hazards": {"type": "array"},
+        "project_files": {"type": "array"},
+        "producer": {"type": "object"},
+        "artifact_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      },
+      "additionalProperties": false
+    },
     "SkillManifest": {
       "type": "object",
       "required": ["id", "version", "roles", "description", "allowed_tools", "input_contracts", "output_contracts"],

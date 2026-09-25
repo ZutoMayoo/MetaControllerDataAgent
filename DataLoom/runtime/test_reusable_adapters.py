@@ -14,6 +14,7 @@ WORKSPACE = RUNTIME.parents[2]
 from benchmark_router import BenchmarkRouter, RoutingError
 from context_projection import ProjectionPolicy, project_search_matches
 from external_adapters import DataAgentBirdAdapter, SignalPilotDbtAdapter
+from dbt_evidence import DbtEvidenceError, validate_dbt_evidence_package
 from orchestrator import DataLoomOrchestrator, _configure_stdout_utf8
 from run_project_understanding_qwen import ReadOnlyRepository
 
@@ -48,6 +49,37 @@ class AdapterProbeTests(unittest.TestCase):
             result = adapter.scan(project)
             self.assertTrue(result["success"])
             self.assertIn("dbt Project Scan", result["observation"]["text"])
+
+    def test_signalpilot_builds_traceable_dbt_evidence(self) -> None:
+        adapter = SignalPilotDbtAdapter(WORKSPACE / "P4" / "SignalPilot")
+        with tempfile.TemporaryDirectory() as directory:
+            project = Path(directory)
+            (project / "models").mkdir()
+            (project / "macros").mkdir()
+            (project / "dbt_project.yml").write_text("name: sample\n", encoding="utf-8")
+            (project / "models" / "schema.yml").write_text(
+                "version: 2\nmodels:\n  - name: result\n    columns:\n      - name: total\n"
+                "sources:\n  - name: raw\n    tables:\n      - name: events\n",
+                encoding="utf-8",
+            )
+            (project / "models" / "base.sql").write_text(
+                "select current_date as run_date from {{ source('raw', 'events') }}\n", encoding="utf-8"
+            )
+            (project / "macros" / "safe.sql").write_text(
+                "{% macro safe_divide(a, b) %} {{ a }} / nullif({{ b }}, 0) {% endmacro %}\n",
+                encoding="utf-8",
+            )
+            package = adapter.evidence_package(task_id="sample001", instruction="Build result", project=project)
+            self.assertEqual([item["name"] for item in package["models"]["missing"]], ["result"])
+            self.assertEqual(package["models"]["missing"][0]["required_columns"], ["total"])
+            model_ref = package["models"]["missing"][0]["source_refs"][0]
+            self.assertGreater(model_ref["line_end"], model_ref["line_start"])
+            self.assertEqual([item["name"] for item in package["macros"]], ["safe_divide"])
+            self.assertEqual(len(package["date_hazards"]), 1)
+            validate_dbt_evidence_package(package, project)
+            package["instruction"] = "tampered"
+            with self.assertRaises(DbtEvidenceError):
+                validate_dbt_evidence_package(package, project)
 
     def test_dataagent_bird_probe_without_importing_optional_dependencies(self) -> None:
         adapter = DataAgentBirdAdapter(WORKSPACE / "external" / "DataAgent")
@@ -97,6 +129,8 @@ class RouterTests(unittest.TestCase):
         self.assertEqual(names, {"project-understanding", "dbt-project-understanding", "nl2sql"})
         self.assertTrue(orchestrator.probe("spider2-dbt")["available"])
         self.assertTrue(orchestrator.probe("bird")["available"])
+        dbt = next(item for item in orchestrator.registry.catalog() if item["name"] == "dbt-project-understanding")
+        self.assertIn("spider2-dbt.evidence", dbt["actions"])
 
 
 if __name__ == "__main__":

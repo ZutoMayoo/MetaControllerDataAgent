@@ -1,0 +1,396 @@
+{
+  "schema_version": "dbt-0.1",
+  "task_id": "asset001",
+  "instruction": "Calculate the average bid, ask, and mid prices for stock tickers on a daily basis and then determine the total book value of shares based on these prices",
+  "public_input_sha256": "75ce9bafb2076aee36e69bf0ed2f2c2e9cfc521b33ff48d371b195de81760774",
+  "project_digest": "773a0bcf0f6efe797a73b8d606da8319bf5c07cb2ba3b3dc9748da48246d67a4",
+  "models": {
+    "missing": [
+      {
+        "name": "bar_quotes",
+        "materialized": "table",
+        "required_columns": [
+          "date",
+          "tt_key",
+          "ts",
+          "ticker",
+          "avg_bid_pr",
+          "avg_ask_pr",
+          "avg_mid_pr"
+        ],
+        "description": "The average mid price for the ticker, calculated as the midpoint between bid and ask prices.",
+        "source_refs": [
+          {
+            "path": "models/schema.yml",
+            "sha256": "817309dc8a64f8d5187d59fad37416f3e7b26d1a1ba14a0367f64f26f81bf43e",
+            "line_start": 24,
+            "line_end": 56
+          }
+        ]
+      },
+      {
+        "name": "book_value",
+        "materialized": "table",
+        "required_columns": [
+          "tt_key",
+          "ticker",
+          "ts",
+          "shares",
+          "value"
+        ],
+        "description": "The total value of the position calculated as shares multiplied by the average mid price.",
+        "source_refs": [
+          {
+            "path": "models/schema.yml",
+            "sha256": "817309dc8a64f8d5187d59fad37416f3e7b26d1a1ba14a0367f64f26f81bf43e",
+            "line_start": 57,
+            "line_end": 80
+          }
+        ]
+      },
+      {
+        "name": "quotes",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/schema.yml",
+            "sha256": "817309dc8a64f8d5187d59fad37416f3e7b26d1a1ba14a0367f64f26f81bf43e",
+            "line_start": 8,
+            "line_end": 8
+          },
+          {
+            "path": "models/schema.yml",
+            "sha256": "817309dc8a64f8d5187d59fad37416f3e7b26d1a1ba14a0367f64f26f81bf43e",
+            "line_start": 18,
+            "line_end": 19
+          }
+        ]
+      },
+      {
+        "name": "trades",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/schema.yml",
+            "sha256": "817309dc8a64f8d5187d59fad37416f3e7b26d1a1ba14a0367f64f26f81bf43e",
+            "line_start": 7,
+            "line_end": 7
+          },
+          {
+            "path": "models/schema.yml",
+            "sha256": "817309dc8a64f8d5187d59fad37416f3e7b26d1a1ba14a0367f64f26f81bf43e",
+            "line_start": 16,
+            "line_end": 17
+          }
+        ]
+      }
+    ],
+    "stubs": [
+      {
+        "name": "explore",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/explore.sql",
+            "sha256": "e2ad209df50262178788ab66d68ffdcb46f083cc67b143dc199354a41ee73c3b",
+            "line_start": 1,
+            "line_end": 1
+          }
+        ]
+      },
+      {
+        "name": "stg_market_trades",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/stg_market_trades.sql",
+            "sha256": "5c634db5b6ae4837d5610c9a38ee70d6c92f2405d9d701b9eaafbac2962ecc44",
+            "line_start": 1,
+            "line_end": 1
+          }
+        ]
+      },
+      {
+        "name": "stg_quotes",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/schema.yml",
+            "sha256": "817309dc8a64f8d5187d59fad37416f3e7b26d1a1ba14a0367f64f26f81bf43e",
+            "line_start": 22,
+            "line_end": 23
+          },
+          {
+            "path": "models/stg_quotes.sql",
+            "sha256": "d10950b04daed46ef9b7508f9b72d769b32431a14e86d3707d4ee59b5b9ff317",
+            "line_start": 1,
+            "line_end": 1
+          }
+        ]
+      },
+      {
+        "name": "stg_sentiment",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/stg_sentiment.sql",
+            "sha256": "3ee8186d9fb93265392232cc609fa792ddb09f037534bb03e084aa0721f8e180",
+            "line_start": 1,
+            "line_end": 1
+          }
+        ]
+      }
+    ],
+    "complete": [
+      {
+        "name": "stg_executions",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/schema.yml",
+            "sha256": "817309dc8a64f8d5187d59fad37416f3e7b26d1a1ba14a0367f64f26f81bf43e",
+            "line_start": 20,
+            "line_end": 21
+          },
+          {
+            "path": "models/stg_executions.sql",
+            "sha256": "e7b5a10b5739ca3fe9f5c6d25143a24ad6b032da7bf1dd4674dde1520619eeab",
+            "line_start": 1,
+            "line_end": 1
+          }
+        ]
+      }
+    ],
+    "orphans": [
+      {
+        "name": "bar_executions",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/bar_executions.sql",
+            "sha256": "a241dab1ae860a09feed241d72a52411f0a17ea83b724bfe87350f1f9c07da1c",
+            "line_start": 1,
+            "line_end": 19
+          }
+        ]
+      },
+      {
+        "name": "benchmarks",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/benchmarks.sql",
+            "sha256": "3a7e03b8a542aa116190d9cfee067cfe6cc74233afc868802e8611751501105d",
+            "line_start": 1,
+            "line_end": 10
+          }
+        ]
+      },
+      {
+        "name": "explore",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/explore.sql",
+            "sha256": "e2ad209df50262178788ab66d68ffdcb46f083cc67b143dc199354a41ee73c3b",
+            "line_start": 1,
+            "line_end": 1
+          }
+        ]
+      },
+      {
+        "name": "positions_shares",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/positions_shares.sql",
+            "sha256": "4e9a5d140f6f30ad71fa935431c9ffec737b36fa791fc622d9bfd5916f79c86e",
+            "line_start": 1,
+            "line_end": 3
+          }
+        ]
+      },
+      {
+        "name": "stg_market_trades",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/stg_market_trades.sql",
+            "sha256": "5c634db5b6ae4837d5610c9a38ee70d6c92f2405d9d701b9eaafbac2962ecc44",
+            "line_start": 1,
+            "line_end": 1
+          }
+        ]
+      },
+      {
+        "name": "stg_sentiment",
+        "materialized": "table",
+        "required_columns": [],
+        "description": "",
+        "source_refs": [
+          {
+            "path": "models/stg_sentiment.sql",
+            "sha256": "3ee8186d9fb93265392232cc609fa792ddb09f037534bb03e084aa0721f8e180",
+            "line_start": 1,
+            "line_end": 1
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "model": "bar_executions",
+      "depends_on": [
+        "stg_executions"
+      ],
+      "source_refs": [
+        {
+          "path": "models/bar_executions.sql",
+          "sha256": "a241dab1ae860a09feed241d72a52411f0a17ea83b724bfe87350f1f9c07da1c",
+          "line_start": 13,
+          "line_end": 13
+        }
+      ]
+    },
+    {
+      "model": "benchmarks",
+      "depends_on": [
+        "stg_market_trades"
+      ],
+      "source_refs": [
+        {
+          "path": "models/benchmarks.sql",
+          "sha256": "3a7e03b8a542aa116190d9cfee067cfe6cc74233afc868802e8611751501105d",
+          "line_start": 9,
+          "line_end": 9
+        }
+      ]
+    },
+    {
+      "model": "explore",
+      "depends_on": [
+        "stg_sentiment"
+      ],
+      "source_refs": [
+        {
+          "path": "models/explore.sql",
+          "sha256": "e2ad209df50262178788ab66d68ffdcb46f083cc67b143dc199354a41ee73c3b",
+          "line_start": 1,
+          "line_end": 1
+        }
+      ]
+    },
+    {
+      "model": "positions_shares",
+      "depends_on": [
+        "bar_executions"
+      ],
+      "source_refs": [
+        {
+          "path": "models/positions_shares.sql",
+          "sha256": "4e9a5d140f6f30ad71fa935431c9ffec737b36fa791fc622d9bfd5916f79c86e",
+          "line_start": 3,
+          "line_end": 3
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "declaration": "source('asset_mgmt', '<table>') — tables: trades, quotes, positions, sentiment, market_trades",
+      "source_refs": [
+        {
+          "path": "models/schema.yml",
+          "sha256": "817309dc8a64f8d5187d59fad37416f3e7b26d1a1ba14a0367f64f26f81bf43e",
+          "line_start": 4,
+          "line_end": 18
+        }
+      ]
+    }
+  ],
+  "macros": [],
+  "date_hazards": [],
+  "project_files": [
+    {
+      "path": "asset.duckdb",
+      "sha256": "f728a00b03236dd21863d5845edcd397666600cc8da086edd19f8bf44b239687"
+    },
+    {
+      "path": "dbt_project.yml",
+      "sha256": "34e6b96ad57d71960cd5176af8c0240905a73038b2b0fc95f43e5b20261e04ac"
+    },
+    {
+      "path": "models/bar_executions.sql",
+      "sha256": "a241dab1ae860a09feed241d72a52411f0a17ea83b724bfe87350f1f9c07da1c"
+    },
+    {
+      "path": "models/benchmarks.sql",
+      "sha256": "3a7e03b8a542aa116190d9cfee067cfe6cc74233afc868802e8611751501105d"
+    },
+    {
+      "path": "models/explore.sql",
+      "sha256": "e2ad209df50262178788ab66d68ffdcb46f083cc67b143dc199354a41ee73c3b"
+    },
+    {
+      "path": "models/positions_shares.sql",
+      "sha256": "4e9a5d140f6f30ad71fa935431c9ffec737b36fa791fc622d9bfd5916f79c86e"
+    },
+    {
+      "path": "models/schema.yml",
+      "sha256": "817309dc8a64f8d5187d59fad37416f3e7b26d1a1ba14a0367f64f26f81bf43e"
+    },
+    {
+      "path": "models/stg_executions.sql",
+      "sha256": "e7b5a10b5739ca3fe9f5c6d25143a24ad6b032da7bf1dd4674dde1520619eeab"
+    },
+    {
+      "path": "models/stg_market_trades.sql",
+      "sha256": "5c634db5b6ae4837d5610c9a38ee70d6c92f2405d9d701b9eaafbac2962ecc44"
+    },
+    {
+      "path": "models/stg_quotes.sql",
+      "sha256": "d10950b04daed46ef9b7508f9b72d769b32431a14e86d3707d4ee59b5b9ff317"
+    },
+    {
+      "path": "models/stg_sentiment.sql",
+      "sha256": "3ee8186d9fb93265392232cc609fa792ddb09f037534bb03e084aa0721f8e180"
+    },
+    {
+      "path": "profiles.yml",
+      "sha256": "45d28a7088863ea6ac522bd988f2d7b7e3af14d3516836c6b841cce14fd290af"
+    }
+  ],
+  "producer": {
+    "role": "dbt-project-understanding",
+    "adapter": "signalpilot-dbt-evidence",
+    "component": "SignalPilot",
+    "revision": "71dc57e4d915ebc2475d4cd27c6d5f8c405e5cf3",
+    "scan_project_sha256": "afd2657fbfd471cb652526a167dafc7476a0a32814381897970553ffa9a59ce4"
+  },
+  "artifact_sha256": "fd4cbf3e56ab1e294c40398bc8ea1b234df3918cb775e547f93ba426eee77d03"
+}

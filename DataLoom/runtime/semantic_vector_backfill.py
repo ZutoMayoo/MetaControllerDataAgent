@@ -42,7 +42,7 @@ POLICIES = {
             "column_name_en",
             "name",
         ),
-        update_fields=("columnDescriptionShort", "columnDescription"),
+        update_fields=("columnDescriptionShort", "columnDescription", "columnNameDesc"),
         vector_fields=("column_description_short_vector",),
     ),
     "data_column_value": BackfillPolicy(

@@ -23,6 +23,7 @@ class SemanticVectorBackfillTests(unittest.TestCase):
             {
                 "columnDescriptionShort": "customer identifier",
                 "columnDescription": "customer identifier",
+                "columnNameDesc": "customer identifier",
             },
         )
         self.assertEqual(source, "column_description_short")
